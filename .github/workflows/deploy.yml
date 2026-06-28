@@ -1,0 +1,76 @@
+name: WebStaff CD — Deploy
+
+on:
+  workflow_run:
+    workflows: ["WebStaff CI — Validate & Build"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      client_intake:
+        description: "Path to client intake JSON"
+        required: true
+        default: "tests/fixtures/example_intake.json"
+      platform:
+        description: "Deploy platform"
+        required: true
+        default: "netlify"
+        type: choice
+        options:
+          - netlify
+          - vercel
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  deploy-netlify:
+    name: Deploy → Netlify
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.platform == 'netlify' ||
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install -r requirements.txt
+      - run: |
+          INTAKE="${{ github.event.inputs.client_intake || 'tests/fixtures/example_intake.json' }}"
+          python3 builder/site_generator.py --intake "$INTAKE"
+          echo "BUILD_DIR=$(ls -td clients/*/ | head -1)" >> $GITHUB_ENV
+      - run: npm install -g netlify-cli
+      - env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy \
+            --dir "${{ env.BUILD_DIR }}" \
+            --site "$NETLIFY_SITE_ID" \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --prod
+
+  deploy-vercel:
+    name: Deploy → Vercel
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.platform == 'vercel'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install -r requirements.txt
+      - run: |
+          python3 builder/site_generator.py --intake "${{ github.event.inputs.client_intake }}"
+          echo "BUILD_DIR=$(ls -td clients/*/ | head -1)" >> $GITHUB_ENV
+      - run: npm install -g vercel
+      - env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel --token "$VERCEL_TOKEN" --cwd "${{ env.BUILD_DIR }}" --prod --yes

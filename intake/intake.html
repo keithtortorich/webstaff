@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebStaff — New Client Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0d0d0d;
+      --white:   #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-300:#d1d5db;
+      --gray-500:#6b7280;
+      --gray-700:#374151;
+      --amber:   #d97706;
+      --amber-lt:#fef3c7;
+      --green:   #16a34a;
+      --red:     #dc2626;
+      --radius:  6px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--black);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header .logo {
+      font-family: 'Oswald', sans-serif;
+      font-size: 22px;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+    header .logo span { color: var(--amber); }
+    header .badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--amber);
+      border: 1px solid var(--amber);
+      border-radius: 20px;
+      padding: 2px 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .page-header { margin-bottom: 36px; }
+    .page-header h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      color: var(--gray-500);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    /* ── Form fields ── */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .field-row.full { grid-template-columns: 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .field label .req { color: var(--amber); margin-left: 2px; }
+
+    .field input,
+    .field select,
+    .field textarea {
+      padding: 10px 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--black);
+      background: var(--white);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(217,119,6,0.12);
+    }
+    .field input.error,
+    .field select.error { border-color: var(--red); }
+    .field .hint {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+    .field .err-msg {
+      font-size: 12px;
+      color: var(--red);
+      display: none;
+    }
+    .field.has-error .err-msg { display: block; }
+
+    /* ── Plan selector ── */
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .plan-option { display: none; }
+    .plan-label {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .plan-option:checked + .plan-label {
+      border-color: var(--amber);
+      background: var(--amber-lt);
+    }
+    .plan-label .plan-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .plan-label .plan-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--amber);
+      margin-bottom: 6px;
+    }
+    .plan-label .plan-desc {
+      font-size: 11px;
+      color: var(--gray-500);
+      line-height: 1.4;
+    }
+    .plan-label .plan-badge {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      background: var(--amber);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* ── Staff preview ── */
+    #staff-preview {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      display: none;
+    }
+    #staff-preview h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 10px;
+    }
+    .staff-chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .staff-chip {
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: 20px;
+      padding: 4px 12px;
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .staff-chip::before { content: "✓"; color: var(--green); font-size: 10px; }
+
+    /* ── Submit ── */
+    .submit-area {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    #submit-btn {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 15px 32px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-transform: uppercase;
+    }
+    #submit-btn:hover { background: #222; }
+    #submit-btn:active { transform: scale(0.99); }
+    #submit-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
+
+    .submit-note {
+      font-size: 12px;
+      color: var(--gray-500);
+      text-align: center;
+    }
+
+    /* ── Status banner ── */
+    #status-banner {
+      display: none;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 16px;
+      border: 1px solid transparent;
+    }
+    #status-banner.loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--amber-lt);
+      border-color: var(--amber);
+      color: #92400e;
+    }
+    #status-banner.success {
+      display: block;
+      background: #f0fdf4;
+      border-color: var(--green);
+      color: #14532d;
+    }
+    #status-banner.error {
+      display: block;
+      background: #fef2f2;
+      border-color: var(--red);
+      color: #7f1d1d;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--amber);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result block ── */
+    #build-result {
+      display: none;
+      margin-top: 24px;
+      padding: 24px;
+      background: var(--black);
+      border-radius: var(--radius);
+      color: var(--white);
+    }
+    #build-result h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: var(--amber);
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 8px 0;
+      border-bottom: 1px solid #222;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-label { color: var(--gray-500); }
+    .result-value { font-weight: 600; text-align: right; }
+    .result-actions { margin-top: 20px; display: flex; gap: 10px; }
+    .result-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: var(--radius);
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
+    }
+    .result-btn:hover { opacity: 0.85; }
+    .result-btn.primary { background: var(--amber); color: var(--white); }
+    .result-btn.secondary { background: #222; color: var(--white); }
+
+    @media (max-width: 600px) {
+      .field-row { grid-template-columns: 1fr; }
+      .plan-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Web<span>Staff</span></div>
+  <div class="badge">Client Setup</div>
+</header>
+
+<div class="page">
+  <div class="page-header">
+    <h1>Build Your AI Office</h1>
+    <p>Complete this form and we'll build your site automatically — no deposit, no credit card, no commitment. You approve before anything goes live.</p>
+  </div>
+
+  <!-- ── Section 1: Business Info ── -->
+  <div class="card">
+    <div class="card-title">01 — Business Information</div>
+
+    <div class="field-row">
+      <div class="field" id="f-biz_name">
+        <label>Business Name <span class="req">*</span></label>
+        <input type="text" id="biz_name" placeholder="Acme Plumbing LLC" />
+        <span class="err-msg">Business name is required.</span>
+      </div>
+      <div class="field" id="f-industry">
+        <label>Industry <span class="req">*</span></label>
+        <select id="industry">
+          <option value="">— Select —</option>
+          <option value="Contractor">General Contractor</option>
+          <option value="Plumber">Plumber</option>
+          <option value="Dentist">Dentist</option>
+          <option value="Med Spa">Med Spa</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Other">Other</option>
+        </select>
+        <span class="err-msg">Please select an industry.</span>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field" id="f-phone">
+        <label>Phone Number <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="(555) 867-5309" />
+        <span class="err-msg">A valid phone number is required.</span>
+      </div>
+      <div class="field" id="f-email">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="owner@example.com" />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field" id="f-service_area">
+        <label>Service Area <span class="req">*</span></label>
+        <input type="text" id="service_area" placeholder="Austin, TX" />
+        <span class="err-msg">Service area is required.</span>
+      </div>
+      <div class="field">
+        <label>Website URL <span class="hint">(if existing)</span></label>
+        <input type="url" id="site_url" placeholder="https://acmeplumbing.com" />
+      </div>
+    </div>
+
+    <div class="field-row full">
+      <div class="field">
+        <label>Business Tagline</label>
+        <input type="text" id="tagline" placeholder="Fast, reliable plumbing — day or night." />
+        <span class="hint">Used as your site's hero subheading.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 2: Plan Selection ── -->
+  <div class="card">
+    <div class="card-title">02 — Choose Your Workforce Plan</div>
+
+    <div class="plan-grid">
+
+      <div>
+        <input class="plan-option" type="radio" name="plan" id="plan-essentials" value="essentials" />
+        <label class="plan-label" for="plan-essentials">
+          <span class="plan-name">Essentials</span>
+          <span class="plan-price">$197/mo</span>
+          <span class="plan-desc">Website Operations Manager. Keeps your business online.</span>
+        </label>
+      </div>
+
+      <div>
+        <input class="plan-option" type="radio" name="plan" id="plan-growth" value="growth" checked />
+        <label class="plan-label" for="plan-growth">
+          <span class="plan-badge">Recommended</span>
+          <span class="plan-name">Growth</span>
+          <span class="plan-price">$497/mo</span>
+          <span class="plan-desc">Full front office — Receptionist, Lead Coordinator, Reputation Manager & more.</span>
+        </label>
+      </div>
+
+      <div>
+        <input class="plan-option" type="radio" name="plan" id="plan-pro" value="pro" />
+        <label class="plan-label" for="plan-pro">
+          <span class="plan-name">Pro</span>
+          <span class="plan-price">$997/mo</span>
+          <span class="plan-desc">Everything in Growth plus Marketing Coordinator, Growth Manager & monthly strategy.</span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Live staff preview -->
+    <div id="staff-preview">
+      <h4>Your AI Office Staff</h4>
+      <div class="staff-chip-list" id="staff-chips"></div>
+    </div>
+  </div>
+
+  <!-- ── Section 3: Reviews (optional) ── -->
+  <div class="card">
+    <div class="card-title">03 — Review Data <span style="font-size:11px;color:var(--gray-500);font-family:'Inter',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;">(optional — only include if accurate)</span></div>
+    <div class="field-row">
+      <div class="field">
+        <label>Average Rating</label>
+        <input type="number" id="rating_value" placeholder="4.9" min="1" max="5" step="0.1" />
+      </div>
+      <div class="field">
+        <label>Review Count</label>
+        <input type="number" id="review_count" placeholder="124" min="0" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Submit ── -->
+  <div class="submit-area">
+    <button id="submit-btn" type="button">Build My AI Office →</button>
+    <p class="submit-note">No deposit. No credit card. You approve the site before anything goes live.</p>
+  </div>
+
+  <div id="status-banner"></div>
+  <div id="build-result"></div>
+
+</div><!-- /page -->
+
+<script>
+  // ── Workforce data (mirrors builder/site_generator.py) ─────────────────────
+  const WORKFORCE = {
+    essentials: [
+      { role: "Website Operations Manager", tagline: "Keeps your business online." }
+    ],
+    growth: [
+      { role: "Website Operations Manager", tagline: "Keeps your business online." },
+      { role: "Receptionist",               tagline: "Answers every call. Books every lead." },
+      { role: "Lead Coordinator",           tagline: "Replies instantly, keeps leads warm." },
+      { role: "Reputation Manager",         tagline: "Gets more 5-star reviews automatically." },
+      { role: "Sales Consultant",           tagline: "Helps customers say yes to bigger jobs." }
+    ],
+    pro: [
+      { role: "Website Operations Manager", tagline: "Keeps your business online." },
+      { role: "Receptionist",               tagline: "Answers every call. Books every lead." },
+      { role: "Lead Coordinator",           tagline: "Replies instantly, keeps leads warm." },
+      { role: "Reputation Manager",         tagline: "Gets more 5-star reviews automatically." },
+      { role: "Sales Consultant",           tagline: "Helps customers say yes to bigger jobs." },
+      { role: "Marketing Coordinator",      tagline: "Keeps your business visible every day." },
+      { role: "Growth Manager",             tagline: "Brings in customers from Google and AI search." },
+      { role: "Service Advisor",            tagline: "Pre-qualifies customers before you arrive." }
+    ]
+  };
+
+  // ── Staff preview ──────────────────────────────────────────────────────────
+  function updateStaffPreview() {
+    const selected = document.querySelector('input[name="plan"]:checked');
+    const plan = selected ? selected.value : 'growth';
+    const staff = WORKFORCE[plan] || [];
+    const chips = document.getElementById('staff-chips');
+    const preview = document.getElementById('staff-preview');
+
+    chips.innerHTML = staff.map(s =>
+      `<div class="staff-chip" title="${s.tagline}">${s.role}</div>`
+    ).join('');
+    preview.style.display = 'block';
+  }
+
+  document.querySelectorAll('input[name="plan"]').forEach(radio => {
+    radio.addEventListener('change', updateStaffPreview);
+  });
+  updateStaffPreview(); // init on load
+
+  // ── Validation ─────────────────────────────────────────────────────────────
+  function validateField(id, condition, message) {
+    const wrapper = document.getElementById('f-' + id);
+    const input = document.getElementById(id);
+    if (!wrapper || !input) return condition;
+    const errMsg = wrapper.querySelector('.err-msg');
+    if (!condition) {
+      wrapper.classList.add('has-error');
+      input.classList.add('error');
+      if (errMsg && message) errMsg.textContent = message;
+    } else {
+      wrapper.classList.remove('has-error');
+      input.classList.remove('error');
+    }
+    return condition;
+  }
+
+  function validateForm() {
+    const biz = document.getElementById('biz_name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const industry = document.getElementById('industry').value;
+    const area = document.getElementById('service_area').value.trim();
+
+    let valid = true;
+    if (!validateField('biz_name', biz.length > 0)) valid = false;
+    if (!validateField('phone', /[\d\s\-\(\)]{7,}/.test(phone))) valid = false;
+    if (!validateField('industry', industry !== '')) valid = false;
+    if (!validateField('service_area', area.length > 0)) valid = false;
+    return valid;
+  }
+
+  // ── Collect intake data ────────────────────────────────────────────────────
+  function collectData() {
+    const plan = document.querySelector('input[name="plan"]:checked')?.value || 'growth';
+    const ratingRaw = document.getElementById('rating_value').value;
+    const countRaw = document.getElementById('review_count').value;
+    const data = {
+      biz_name:     document.getElementById('biz_name').value.trim(),
+      phone:        document.getElementById('phone').value.trim(),
+      email:        document.getElementById('email').value.trim(),
+      industry:     document.getElementById('industry').value,
+      service_area: document.getElementById('service_area').value.trim(),
+      site_url:     document.getElementById('site_url').value.trim(),
+      tagline:      document.getElementById('tagline').value.trim(),
+      plan,
+    };
+    if (ratingRaw) data.rating_value = parseFloat(ratingRaw);
+    if (countRaw)  data.review_count = parseInt(countRaw, 10);
+    return data;
+  }
+
+  // ── Show status ────────────────────────────────────────────────────────────
+  function setStatus(type, html) {
+    const banner = document.getElementById('status-banner');
+    banner.className = type;
+    banner.innerHTML = html;
+    banner.style.display = '';
+  }
+
+  function clearStatus() {
+    const banner = document.getElementById('status-banner');
+    banner.style.display = 'none';
+    banner.className = '';
+    banner.innerHTML = '';
+  }
+
+  // ── Show build result ──────────────────────────────────────────────────────
+  function showResult(data, responseData) {
+    const plan = data.plan;
+    const staff = WORKFORCE[plan] || [];
+    const staffNames = staff.map(s => s.role).join(', ');
+    const outputDir = responseData?.output_dir || `clients/${data.biz_name.toLowerCase().replace(/\s+/g,'_')}`;
+    const previewUrl = responseData?.preview_url || '#';
+
+    const result = document.getElementById('build-result');
+    result.innerHTML = `
+      <h3>✅ AI Office Built for ${data.biz_name}</h3>
+      <div class="result-row"><span class="result-label">Plan</span><span class="result-value">${plan.charAt(0).toUpperCase()+plan.slice(1)}</span></div>
+      <div class="result-row"><span class="result-label">Industry</span><span class="result-value">${data.industry}</span></div>
+      <div class="result-row"><span class="result-label">Service Area</span><span class="result-value">${data.service_area}</span></div>
+      <div class="result-row"><span class="result-label">AI Staff Deployed</span><span class="result-value">${staff.length} employees</span></div>
+      <div class="result-row"><span class="result-label">Output Directory</span><span class="result-value">${outputDir}</span></div>
+      <div class="result-row"><span class="result-label">Active Roles</span><span class="result-value" style="max-width:280px;">${staffNames}</span></div>
+      <div class="result-actions">
+        <button class="result-btn primary" onclick="window.open('${previewUrl}','_blank')">Preview Site →</button>
+        <button class="result-btn secondary" onclick="downloadIntake()">Download Intake JSON</button>
+      </div>
+    `;
+    result.style.display = 'block';
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Download intake as JSON (fallback if API unavailable) ─────────────────
+  let lastIntakeData = null;
+  function downloadIntake() {
+    if (!lastIntakeData) return;
+    const blob = new Blob([JSON.stringify(lastIntakeData, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${lastIntakeData.biz_name.replace(/\s+/g,'_').toLowerCase()}_intake.json`;
+    a.click();
+  }
+
+  // ── Submit ─────────────────────────────────────────────────────────────────
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    clearStatus();
+    document.getElementById('build-result').style.display = 'none';
+
+    if (!validateForm()) {
+      setStatus('error', '⚠️ Please fix the errors above before submitting.');
+      return;
+    }
+
+    const data = collectData();
+    lastIntakeData = data;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+
+    setStatus('loading', `
+      <div class="spinner"></div>
+      <span>Building AI office for <strong>${data.biz_name}</strong>…</span>
+    `);
+
+    try {
+      const response = await fetch('/api/build', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(err.error || `Server error ${response.status}`);
+      }
+
+      const result = await response.json();
+      clearStatus();
+      showResult(data, result);
+
+    } catch (err) {
+      // If API isn't running (local dev), show download fallback
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        clearStatus();
+        setStatus('success', `
+          ✅ Intake data ready. API not reachable — download the JSON to run the build manually.<br>
+          <strong>Command:</strong> <code>python3 builder/site_generator.py --intake &lt;file&gt;</code>
+        `);
+        showResult(data, {});
+      } else {
+        clearStatus();
+        setStatus('error', `❌ Build failed: ${err.message}`);
+      }
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
