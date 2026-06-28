@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebStaff — Investor Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --navy:    #0b1120;
+  --navy-2:  #131f35;
+  --blue:    #1d4ed8;
+  --blue-lt: #dbeafe;
+  --green:   #16a34a;
+  --green-lt:#f0fdf4;
+  --amber:   #d97706;
+  --red:     #dc2626;
+  --bone:    #f8f5ef;
+  --text:    #1e293b;
+  --muted:   #64748b;
+  --border:  #e2e8f0;
+  --radius:  12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bone); color: var(--text); line-height: 1.6; }
+
+/* ── TYPOGRAPHY ──────────────────────────────────────────────────────────── */
+.serif  { font-family: 'DM Serif Display', Georgia, serif; }
+.mono   { font-family: 'IBM Plex Mono', monospace; }
+h1, h2, h3 { line-height: 1.15; }
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+.nav { background: var(--navy); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.nav__logo { color: white; font-weight: 800; font-size: 18px; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.nav__logo-dot { width: 9px; height: 9px; border-radius: 50%; background: #60a5fa; }
+.nav__links { display: flex; gap: 24px; }
+.nav__links a { color: rgba(255,255,255,.65); text-decoration: none; font-size: 13px; font-weight: 500; transition: color .15s; }
+.nav__links a:hover { color: white; }
+
+/* ── HERO ────────────────────────────────────────────────────────────────── */
+.hero { background: var(--navy); color: white; padding: 96px 32px 80px; overflow: hidden; position: relative; }
+.hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(29,78,216,.35) 0%, transparent 65%); pointer-events: none; }
+.hero__inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; position: relative; z-index: 1; }
+.hero__eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #60a5fa; margin-bottom: 20px; }
+.hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 4.5vw, 58px); line-height: 1.08; margin-bottom: 24px; }
+.hero h1 em { font-style: italic; color: #93c5fd; }
+.hero__sub { font-size: 18px; color: rgba(255,255,255,.7); margin-bottom: 36px; max-width: 480px; }
+.hero__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.hero__stat { border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 18px 16px; background: rgba(255,255,255,.05); }
+.hero__stat-num { font-family: 'DM Serif Display', serif; font-size: 32px; color: white; display: block; }
+.hero__stat-label { font-size: 11px; color: rgba(255,255,255,.55); line-height: 1.4; }
+
+/* ── DEMO TERMINAL ───────────────────────────────────────────────────────── */
+.terminal { background: #0d1117; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,.5); }
+.terminal__bar { background: #1c2128; padding: 12px 16px; display: flex; align-items: center; gap: 8px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot--red { background: #ff5f57; }
+.dot--yellow { background: #ffbd2e; }
+.dot--green { background: #28c840; }
+.terminal__title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(255,255,255,.4); margin-left: auto; margin-right: auto; }
+.terminal__body { padding: 20px 22px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.8; min-height: 200px; }
+.terminal__line { display: block; }
+.terminal__prompt { color: #60a5fa; }
+.terminal__cmd { color: #e2e8f0; }
+.terminal__out { color: #86efac; }
+.terminal__dim { color: rgba(255,255,255,.35); }
+.terminal__cursor { display: inline-block; width: 8px; height: 14px; background: #60a5fa; animation: blink 1s step-end infinite; vertical-align: middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── SECTIONS ────────────────────────────────────────────────────────────── */
+.section { padding: 80px 32px; }
+.section--alt { background: white; }
+.section--dark { background: var(--navy); color: white; }
+.container { max-width: 1100px; margin: 0 auto; }
+.eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+.section--dark .eyebrow { color: #60a5fa; }
+h2.section-title { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 14px; }
+.section-sub { font-size: 17px; color: var(--muted); max-width: 560px; margin-bottom: 56px; }
+.section--dark .section-sub { color: rgba(255,255,255,.6); }
+
+/* ── PROBLEM GRID ────────────────────────────────────────────────────────── */
+.problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.problem-card { background: white; border-radius: var(--radius); padding: 28px; border: 1px solid var(--border); border-top: 3px solid var(--red); }
+.problem-card__num { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--red); line-height: 1; margin-bottom: 8px; }
+.problem-card__label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.problem-card__src { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+
+/* ── WORKFORCE PANEL ─────────────────────────────────────────────────────── */
+.workforce-demo { max-width: 860px; margin: 0 auto; }
+.workforce-demo__tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.plan-tab { padding: 10px 20px; border-radius: 999px; border: 2px solid var(--border); background: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.plan-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+.plan-tab[data-plan="growth"].active { background: var(--green); border-color: var(--green); }
+.plan-tab[data-plan="pro"].active { background: var(--blue); border-color: var(--blue); }
+.price-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; opacity: .7; margin-left: 4px; }
+.staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.staff-card { border-radius: 10px; padding: 16px; border: 1px solid var(--border); transition: all .2s; }
+.staff-card.active { background: var(--green-lt); border-color: var(--green); }
+.staff-card.inactive { background: #f8fafc; opacity: .45; }
+.staff-card__name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.staff-card__desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.staff-card__badge { font-size: 11px; font-weight: 600; color: var(--green); }
+.staff-card.inactive .staff-card__badge { color: var(--muted); }
+.dept-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; }
+
+/* ── METRICS ─────────────────────────────────────────────────────────────── */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.metric { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 24px; }
+.metric__num { font-family: 'DM Serif Display', serif; font-size: 40px; color: white; line-height: 1; margin-bottom: 6px; }
+.metric__num span { font-size: 24px; }
+.metric__label { font-size: 12px; color: rgba(255,255,255,.5); }
+
+/* ── SCENARIO TABLE ──────────────────────────────────────────────────────── */
+.scenario-table { width: 100%; border-collapse: collapse; margin-top: 32px; }
+.scenario-table th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.45); font-family: 'IBM Plex Mono', monospace; text-align: left; padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.scenario-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,.07); font-size: 15px; }
+.scenario-table tr.expected td { background: rgba(29,78,216,.18); }
+.scenario-table tr.expected td:first-child { border-left: 3px solid #60a5fa; }
+.badge-scenario { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; background: #1d4ed8; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+.green-val { color: #86efac; font-weight: 600; }
+
+/* ── PIPELINE ────────────────────────────────────────────────────────────── */
+.pipeline { display: flex; gap: 0; align-items: stretch; margin-top: 40px; }
+.pipe-stage { flex: 1; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); padding: 20px 16px; position: relative; }
+.pipe-stage:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: rgba(255,255,255,.3); z-index: 2; }
+.pipe-stage:first-child { border-radius: 10px 0 0 10px; }
+.pipe-stage:last-child  { border-radius: 0 10px 10px 0; }
+.pipe-stage__num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .12em; color: rgba(255,255,255,.35); text-transform: uppercase; margin-bottom: 6px; }
+.pipe-stage__label { font-size: 13px; font-weight: 700; color: white; margin-bottom: 4px; }
+.pipe-stage__desc { font-size: 11px; color: rgba(255,255,255,.45); line-height: 1.45; }
+.pipe-stage--active { background: rgba(29,78,216,.25); border-color: rgba(96,165,250,.4); }
+
+/* ── ASK ─────────────────────────────────────────────────────────────────── */
+.ask-box { background: white; border-radius: 16px; padding: 48px; border: 1px solid var(--border); max-width: 720px; margin: 0 auto; text-align: center; }
+.ask-amount { font-family: 'DM Serif Display', serif; font-size: 72px; color: var(--navy); line-height: 1; margin-bottom: 8px; }
+.ask-label { font-size: 15px; color: var(--muted); margin-bottom: 32px; }
+.ask-uses { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; margin-bottom: 36px; }
+.ask-use { background: var(--bone); border-radius: 8px; padding: 14px 16px; }
+.ask-use__title { font-weight: 700; font-size: 13px; margin-bottom: 3px; }
+.ask-use__desc { font-size: 12px; color: var(--muted); }
+.ask-note { font-size: 13px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+.cta-btn { display: inline-block; background: var(--navy); color: white; text-decoration: none; border-radius: 10px; padding: 16px 40px; font-size: 16px; font-weight: 700; margin-top: 28px; transition: background .15s; }
+.cta-btn:hover { background: var(--blue); }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero__inner { grid-template-columns: 1fr; }
+  .terminal { display: none; }
+  .problem-grid, .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .pipeline { flex-direction: column; }
+  .pipe-stage:not(:last-child)::after { content: '↓'; right: auto; left: 20px; top: auto; bottom: -14px; transform: none; }
+  .pipe-stage:first-child { border-radius: 10px 10px 0 0; }
+  .pipe-stage:last-child  { border-radius: 0 0 10px 10px; }
+  .ask-uses { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .section { padding: 56px 20px; }
+  .problem-grid, .metrics-grid { grid-template-columns: 1fr; }
+  .hero { padding: 64px 20px; }
+  .hero__stats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav__logo" href="#">
+    <span class="nav__logo-dot"></span>WebStaff
+  </a>
+  <div class="nav__links">
+    <a href="#problem">Problem</a>
+    <a href="#product">Product</a>
+    <a href="#economics">Economics</a>
+    <a href="#ask">The Ask</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__inner">
+    <div>
+      <div class="hero__eyebrow">Investor Demo · Phoenix HVAC Beachhead</div>
+      <h1>The <em>office staff</em> every contractor needs but can't afford to hire.</h1>
+      <p class="hero__sub">WebStaff builds the website for free. Contractors pay a monthly subscription for an AI workforce that answers calls, follows up leads, and earns reviews — around the clock.</p>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-num">2.5M</span>
+          <span class="hero__stat-label">home-service businesses in the US</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num">50%</span>
+          <span class="hero__stat-label">of trades have no website — double the SMB average</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num">88%</span>
+          <span class="hero__stat-label">gross margin on the recurring AI staff subscription</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Terminal Demo -->
+    <div class="terminal" aria-label="Live system demo">
+      <div class="terminal__bar">
+        <div class="dot dot--red"></div>
+        <div class="dot dot--yellow"></div>
+        <div class="dot dot--green"></div>
+        <span class="terminal__title">webstaff — site generator</span>
+      </div>
+      <div class="terminal__body" id="termBody">
+        <span class="terminal__line"><span class="terminal__prompt">$ </span><span class="terminal__cmd" id="termCmd"></span></span>
+        <div id="termOutput"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="eyebrow">The Problem</div>
+    <h2 class="section-title">Contractors lose jobs they already paid to generate.</h2>
+    <p class="section-sub">The structural gap isn't marketing. It's the front office — the 30 seconds after the phone rings and nobody picks up.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-card__num">27%</div>
+        <div class="problem-card__label">of home-service calls go unanswered</div>
+        <div class="problem-card__src">Invoca, 2026</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card__num">85%</div>
+        <div class="problem-card__label">of callers who reach voicemail never call back</div>
+        <div class="problem-card__src">BIA/Kelsey</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card__num">78%</div>
+        <div class="problem-card__label">of homeowners hire whoever responds first</div>
+        <div class="problem-card__src">Lead Connect / MIT</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card__num">60%</div>
+        <div class="problem-card__label">of after-hours HVAC calls go unanswered</div>
+        <div class="problem-card__src">ServiceTitan</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card__num">550K</div>
+        <div class="problem-card__label">plumber shortfall projected by 2027 — can't just hire</div>
+        <div class="problem-card__src">Expert Market Research</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card__num">21×</div>
+        <div class="problem-card__label">more likely to qualify a lead when responding in under 5 min</div>
+        <div class="problem-card__src">Harvard Business Review</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="section section--alt" id="product">
+  <div class="container">
+    <div class="eyebrow">The Product</div>
+    <h2 class="section-title">Not software. An office staff.</h2>
+    <p class="section-sub">Contractors understand employees. They don't understand SaaS. Every WebStaff capability is a hire — and the AI is invisible by design.</p>
+
+    <div class="workforce-demo">
+      <div class="workforce-demo__tabs">
+        <button class="plan-tab active" data-plan="essentials" onclick="switchPlan('essentials')">Essentials <span class="price-tag">$197/mo</span></button>
+        <button class="plan-tab" data-plan="growth" onclick="switchPlan('growth')">Growth — Recommended <span class="price-tag">$497/mo</span></button>
+        <button class="plan-tab" data-plan="pro" onclick="switchPlan('pro')">Pro <span class="price-tag">$997/mo</span></button>
+      </div>
+      <div id="staffGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ECONOMICS -->
+<section class="section section--dark" id="economics">
+  <div class="container">
+    <div class="eyebrow">Unit Economics</div>
+    <h2 class="section-title">The model is built to survive its own worst case.</h2>
+    <p class="section-sub">Phoenix HVAC beachhead. 24-month model. Expected scenario cash-flow positive by month 3.</p>
+
+    <div class="metrics-grid">
+      <div class="metric">
+        <div class="metric__num">$487</div>
+        <div class="metric__label">Blended ARPU / month (weighted to Growth)</div>
+      </div>
+      <div class="metric">
+        <div class="metric__num">88<span>%</span></div>
+        <div class="metric__label">Gross margin — SaaS-grade, near-zero variable cost</div>
+      </div>
+      <div class="metric">
+        <div class="metric__num">&lt;4</div>
+        <div class="metric__label">Month CAC payback — each customer funds the next</div>
+      </div>
+      <div class="metric">
+        <div class="metric__num">$8.5K</div>
+        <div class="metric__label">Modeled LTV at 5% monthly churn</div>
+      </div>
+    </div>
+
+    <table class="scenario-table">
+      <thead>
+        <tr>
+          <th>Scenario</th>
+          <th>Customers M12</th>
+          <th>ARR M12</th>
+          <th>ARR M24</th>
+          <th>CF+ by</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Conservative</td>
+          <td>~34</td>
+          <td>$197K</td>
+          <td>$368K</td>
+          <td class="green-val">Month 7</td>
+        </tr>
+        <tr class="expected">
+          <td><strong>Expected</strong> <span class="badge-scenario">Base case</span></td>
+          <td><strong>~81</strong></td>
+          <td><strong>$474K</strong></td>
+          <td><strong>$981K</strong></td>
+          <td class="green-val"><strong>Month 3</strong></td>
+        </tr>
+        <tr>
+          <td>Upside</td>
+          <td>~181</td>
+          <td>$1.06M</td>
+          <td>$2.31M</td>
+          <td class="green-val">Month 2</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:48px">
+      <div class="eyebrow" style="color:#60a5fa">Go-to-Market Pipeline</div>
+      <div class="pipeline">
+        <div class="pipe-stage pipe-stage--active">
+          <div class="pipe-stage__num">Stage 0</div>
+          <div class="pipe-stage__label">Target</div>
+          <div class="pipe-stage__desc">Phoenix HVAC · zip-code list · Google Maps pull</div>
+        </div>
+        <div class="pipe-stage pipe-stage--active">
+          <div class="pipe-stage__num">Stage 1–2</div>
+          <div class="pipe-stage__label">Scrape + Audit</div>
+          <div class="pipe-stage__desc">Segment A (no site) / B (bad site) · PageSpeed audit</div>
+        </div>
+        <div class="pipe-stage pipe-stage--active">
+          <div class="pipe-stage__num">Stage 3</div>
+          <div class="pipe-stage__label">Enrich</div>
+          <div class="pipe-stage__desc">Email validate · outreach channel assigned</div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-stage__num">Stage 4</div>
+          <div class="pipe-stage__label">Cold Email</div>
+          <div class="pipe-stage__desc">3-touch CAN-SPAM sequence · audit finding as hook</div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-stage__num">Stage 5</div>
+          <div class="pipe-stage__label">Intake → Build</div>
+          <div class="pipe-stage__desc">Free site reveal · AI voice closer · subscription</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASK -->
+<section class="section" id="ask">
+  <div class="container">
+    <div class="eyebrow">The Ask</div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:40px">Capital compresses the timeline.<br>It doesn't enable the business.</h2>
+    <div class="ask-box">
+      <div class="ask-amount">$15K–$50K</div>
+      <div class="ask-label">SAFE · high valuation cap · minimal dilution</div>
+      <div class="ask-uses">
+        <div class="ask-use">
+          <div class="ask-use__title">AI Tooling</div>
+          <div class="ask-use__desc">Voice AI, SMS, automation stack — the variable cost that scales with customers</div>
+        </div>
+        <div class="ask-use">
+          <div class="ask-use__title">Marketing Bursts</div>
+          <div class="ask-use__desc">Timed Meta ad spend during Phoenix HVAC summer peak — maximum demand signal</div>
+        </div>
+        <div class="ask-use">
+          <div class="ask-use__title">Cold Outreach</div>
+          <div class="ask-use__desc">Sending domain warmup, email tooling, Outscraper list pulls</div>
+        </div>
+        <div class="ask-use">
+          <div class="ask-use__title">Working Capital</div>
+          <div class="ask-use__desc">Buffer through month 3 cash-flow positive milestone in expected case</div>
+        </div>
+      </div>
+      <div class="ask-note">
+        88% gross margin · sub-4-month payback · 100% recurring revenue<br>
+        One trade · one metro · one proven playbook at a time.
+      </div>
+      <a class="cta-btn" href="mailto:keith@webstaff.com">Request the Full Business Plan →</a>
+    </div>
+
+    <div style="margin-top:48px; text-align:center">
+      <div class="eyebrow">The Team</div>
+      <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:24px;">
+        <div style="text-align:center">
+          <div style="font-weight:700;font-size:15px">K. Michael Tortorich, MD</div>
+          <div style="font-size:13px;color:var(--muted)">CEO · Go-to-Market · Operations</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-weight:700;font-size:15px">Patrick Bukowski</div>
+          <div style="font-size:13px;color:var(--muted)">COO · Client Success · Growth Execution</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-weight:700;font-size:15px">Wenjie Tong</div>
+          <div style="font-size:13px;color:var(--muted)">CTO · Product Architecture · AI Stack</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--navy);color:rgba(255,255,255,.4);padding:24px 32px;font-size:12px;font-family:'IBM Plex Mono',monospace;display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;">
+  <span>WebStaff · webstaff.com · Confidential — not for distribution</span>
+  <span>© 2026 WebStaff</span>
+</footer>
+
+<script>
+/* ── WORKFORCE PLAN SWITCHER ─────────────────────────────────────────────── */
+const ALL_STAFF = [
+  { name:"Receptionist",               dept:"Front Office", desc:"Answers every call, 24/7",                    plans:["growth","pro"] },
+  { name:"Lead Coordinator",           dept:"Front Office", desc:"Replies in seconds, keeps leads warm",         plans:["growth","pro"] },
+  { name:"Appointment Scheduler",      dept:"Front Office", desc:"Books jobs while you're on the roof",          plans:["pro"] },
+  { name:"Reputation Manager",         dept:"Marketing",    desc:"Earns 5-star reviews on autopilot",            plans:["growth","pro"] },
+  { name:"Marketing Coordinator",      dept:"Marketing",    desc:"Keeps the business visible every day",         plans:["pro"] },
+  { name:"Growth Manager",             dept:"Marketing",    desc:"Brings homeowners from Google & AI search",    plans:["pro"] },
+  { name:"Service Advisor",            dept:"Sales",        desc:"Pre-qualifies calls before trucks roll",        plans:["pro"] },
+  { name:"Sales Consultant",           dept:"Sales",        desc:"Helps customers say yes to bigger jobs",        plans:["growth","pro"] },
+  { name:"Website Operations Manager", dept:"Operations",   desc:"Keeps the site live and current, hands-free",  plans:["essentials","growth","pro"] },
+];
+
+function switchPlan(plan) {
+  document.querySelectorAll('.plan-tab').forEach(t => t.classList.toggle('active', t.dataset.plan === plan));
+
+  const depts = {};
+  ALL_STAFF.forEach(s => {
+    depts[s.dept] = depts[s.dept] || [];
+    depts[s.dept].push(s);
+  });
+
+  let html = '';
+  for (const [dept, staff] of Object.entries(depts)) {
+    html += `<div class="dept-label">${dept}</div><div class="staff-grid">`;
+    for (const s of staff) {
+      const active = s.plans.includes(plan);
+      html += `<div class="staff-card ${active ? 'active' : 'inactive'}">
+        <div class="staff-card__name">${s.name}</div>
+        <div class="staff-card__desc">${s.desc}</div>
+        <div class="staff-card__badge">${active ? '✓ Active' : 'Available — upgrade to add'}</div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  document.getElementById('staffGrid').innerHTML = html;
+}
+switchPlan('essentials');
+
+/* ── TERMINAL ANIMATION ──────────────────────────────────────────────────── */
+const CMD = 'python3 builder/site_generator.py --intake tests/fixtures/example_intake.json';
+const OUTPUT = [
+  { text: '',                                                           delay: 800,  cls: 'terminal__dim' },
+  { text: '  Loading intake: Desert Air HVAC · Phoenix HVAC · Growth', delay: 200,  cls: 'terminal__dim' },
+  { text: '  Preset:  Plumbing / HVAC / Electrical (urgent / navy)',    delay: 180,  cls: 'terminal__dim' },
+  { text: '  Injecting SEO meta + LocalBusiness schema...',            delay: 300,  cls: 'terminal__dim' },
+  { text: '  Replacing 13 brand tokens → "Desert Air HVAC"',           delay: 250,  cls: 'terminal__dim' },
+  { text: '  Generating 6 service pages from intake...',               delay: 300,  cls: 'terminal__dim' },
+  { text: '  Building AI Office Staff panel (Growth: 5 active)...',    delay: 350,  cls: 'terminal__dim' },
+  { text: '',                                                           delay: 200,  cls: '' },
+  { text: '✅ Built: Desert Air HVAC',                                  delay: 100,  cls: 'terminal__out' },
+  { text: '   Output: clients/desert-air-hvac_20260629/',               delay: 80,   cls: 'terminal__out' },
+  { text: '   Plan:   Growth  |  Staff: 5 active',                     delay: 80,   cls: 'terminal__out' },
+  { text: '   Pages:  index.html + 6 service pages',                   delay: 80,   cls: 'terminal__out' },
+  { text: '   Deploy: netlify deploy --prod --dir .',                  delay: 150,  cls: 'terminal__out' },
+];
+
+let cmdDone = false;
+let charIdx = 0;
+let lineIdx = 0;
+
+function typeCmd() {
+  const el = document.getElementById('termCmd');
+  if (charIdx < CMD.length) {
+    el.textContent += CMD[charIdx++];
+    setTimeout(typeCmd, 28 + Math.random() * 20);
+  } else {
+    cmdDone = true;
+    setTimeout(printNextLine, 400);
+  }
+}
+
+function printNextLine() {
+  if (lineIdx >= OUTPUT.length) return;
+  const line = OUTPUT[lineIdx++];
+  const out = document.getElementById('termOutput');
+  const span = document.createElement('span');
+  span.className = 'terminal__line ' + (line.cls || '');
+  span.textContent = line.text;
+  out.appendChild(span);
+  setTimeout(printNextLine, line.delay);
+}
+
+// Start animation after a short pause
+setTimeout(typeCmd, 800);
+</script>
+</body>
+</html>

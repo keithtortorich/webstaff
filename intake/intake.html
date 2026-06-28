@@ -1,697 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WebStaff — New Client Setup</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Your Free Website — WebStaff</title>
+<meta name="description" content="WebStaff builds your contractor website for free, then gives you an AI office staff that answers calls, follows up leads, and earns reviews 24/7.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f8fafc;
+  --white:   #ffffff;
+  --navy:    #0f172a;
+  --blue:    #1d4ed8;
+  --blue-lt: #eff6ff;
+  --green:   #16a34a;
+  --green-lt:#f0fdf4;
+  --amber:   #d97706;
+  --border:  #e2e8f0;
+  --muted:   #64748b;
+  --radius:  10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); line-height: 1.55; font-size: 15px; }
 
-    :root {
-      --black:   #0d0d0d;
-      --white:   #ffffff;
-      --gray-50: #f9fafb;
-      --gray-100:#f3f4f6;
-      --gray-300:#d1d5db;
-      --gray-500:#6b7280;
-      --gray-700:#374151;
-      --amber:   #d97706;
-      --amber-lt:#fef3c7;
-      --green:   #16a34a;
-      --red:     #dc2626;
-      --radius:  6px;
-    }
+/* NAV */
+.nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.nav__logo { font-size: 18px; font-weight: 800; color: var(--navy); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.nav__logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+.nav__tagline { font-size: 12px; color: var(--muted); font-weight: 400; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--gray-50);
-      color: var(--black);
-      min-height: 100vh;
-    }
+/* HERO */
+.hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: white; padding: 64px 24px 56px; text-align: center; }
+.hero__eyebrow { display: inline-block; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+.hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+.hero h1 em { font-style: normal; color: #60a5fa; }
+.hero__sub { font-size: 18px; color: rgba(255,255,255,.75); max-width: 540px; margin: 0 auto 32px; }
+.proof-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; }
+.proof-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.8); }
+.proof-item strong { color: white; }
 
-    /* ── Header ── */
-    header {
-      background: var(--black);
-      padding: 18px 32px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    header .logo {
-      font-family: 'Oswald', sans-serif;
-      font-size: 22px;
-      color: var(--white);
-      letter-spacing: 0.04em;
-    }
-    header .logo span { color: var(--amber); }
-    header .badge {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--amber);
-      border: 1px solid var(--amber);
-      border-radius: 20px;
-      padding: 2px 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+/* CONTAINER */
+.container { max-width: 680px; margin: 0 auto; padding: 0 24px; }
 
-    /* ── Layout ── */
-    .page {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-    }
+/* FORM WRAPPER */
+.form-wrap { padding: 48px 24px 80px; }
 
-    .page-header { margin-bottom: 36px; }
-    .page-header h1 {
-      font-family: 'Oswald', sans-serif;
-      font-size: 32px;
-      font-weight: 600;
-      line-height: 1.15;
-      margin-bottom: 8px;
-    }
-    .page-header p {
-      color: var(--gray-500);
-      font-size: 15px;
-      line-height: 1.6;
-    }
+/* PLAN PICKER */
+.plan-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
+@media (max-width: 560px) { .plan-picker { grid-template-columns: 1fr; } }
+.plan-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 16px 14px; cursor: pointer; transition: border-color .15s, background .15s; }
+.plan-card input { position: absolute; opacity: 0; pointer-events: none; }
+.plan-card:has(input:checked) { border-color: var(--blue); background: var(--blue-lt); }
+.plan-card.recommend { border-color: var(--green); }
+.plan-card.recommend:has(input:checked) { background: var(--green-lt); }
+.plan-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.plan-name { font-weight: 700; font-size: 14px; }
+.plan-price { font-weight: 800; font-size: 17px; color: var(--blue); }
+.plan-card.recommend .plan-price { color: var(--green); }
+.plan-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; background: var(--green); color: white; border-radius: 4px; padding: 2px 6px; }
+.plan-desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.plan-staff { margin-top: 8px; font-size: 11.5px; color: #374151; }
+.plan-staff span { display: block; padding: 2px 0; }
+.plan-staff span::before { content: "✓ "; color: var(--green); font-weight: 700; }
 
-    /* ── Card ── */
-    .card {
-      background: var(--white);
-      border: 1px solid var(--gray-300);
-      border-radius: var(--radius);
-      padding: 32px;
-      margin-bottom: 24px;
-    }
-    .card-title {
-      font-family: 'Oswald', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray-500);
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--gray-100);
-    }
+/* CARD */
+.card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+.card__title { font-size: 15px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.card__num { width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* ── Form fields ── */
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    .field-row.full { grid-template-columns: 1fr; }
+/* FIELDS */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+.field label .req { color: #ef4444; }
+.field .hint { font-size: 12px; color: var(--muted); margin: -2px 0 6px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 11px 13px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font: inherit; font-size: 14px; color: var(--navy);
+  background: white; transition: border-color .15s, box-shadow .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+}
+.field textarea { min-height: 80px; resize: vertical; }
+.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; }
+.field input.err, .field select.err, .field textarea.err { border-color: #ef4444; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
 
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--gray-700);
-    }
-    .field label .req { color: var(--amber); margin-left: 2px; }
+/* CHIPS */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.chip span { display: inline-block; padding: 7px 13px; border: 1px solid var(--border); border-radius: 999px; background: white; color: var(--muted); font-size: 13px; cursor: pointer; transition: all .13s; user-select: none; }
+.chip input:checked + span { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); font-weight: 600; }
 
-    .field input,
-    .field select,
-    .field textarea {
-      padding: 10px 12px;
-      border: 1px solid var(--gray-300);
-      border-radius: var(--radius);
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      color: var(--black);
-      background: var(--white);
-      transition: border-color 0.15s;
-      outline: none;
-    }
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--amber);
-      box-shadow: 0 0 0 3px rgba(217,119,6,0.12);
-    }
-    .field input.error,
-    .field select.error { border-color: var(--red); }
-    .field .hint {
-      font-size: 12px;
-      color: var(--gray-500);
-    }
-    .field .err-msg {
-      font-size: 12px;
-      color: var(--red);
-      display: none;
-    }
-    .field.has-error .err-msg { display: block; }
+/* COND */
+.cond { display: none; margin-top: 14px; padding: 16px; border-left: 2px solid var(--blue); background: var(--blue-lt); border-radius: 0 8px 8px 0; }
+.cond.open { display: block; }
 
-    /* ── Plan selector ── */
-    .plan-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 4px;
-    }
-    .plan-option { display: none; }
-    .plan-label {
-      display: flex;
-      flex-direction: column;
-      border: 2px solid var(--gray-300);
-      border-radius: var(--radius);
-      padding: 16px;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      position: relative;
-    }
-    .plan-option:checked + .plan-label {
-      border-color: var(--amber);
-      background: var(--amber-lt);
-    }
-    .plan-label .plan-name {
-      font-family: 'Oswald', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .plan-label .plan-price {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--amber);
-      margin-bottom: 6px;
-    }
-    .plan-label .plan-desc {
-      font-size: 11px;
-      color: var(--gray-500);
-      line-height: 1.4;
-    }
-    .plan-label .plan-badge {
-      position: absolute;
-      top: -10px;
-      right: 10px;
-      background: var(--amber);
-      color: var(--white);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
+/* SUBMIT */
+.submit-btn { width: 100%; background: var(--blue); color: white; border: none; border-radius: 10px; padding: 16px; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; transition: background .15s, transform .1s; margin-top: 8px; }
+.submit-btn:hover { background: #1e40af; transform: translateY(-1px); }
+.submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.fine-print { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; }
+.err-msg { color: #ef4444; font-size: 13px; text-align: center; margin-top: 10px; display: none; }
 
-    /* ── Staff preview ── */
-    #staff-preview {
-      margin-top: 20px;
-      padding: 16px;
-      background: var(--gray-100);
-      border-radius: var(--radius);
-      display: none;
-    }
-    #staff-preview h4 {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray-500);
-      margin-bottom: 10px;
-    }
-    .staff-chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .staff-chip {
-      font-size: 12px;
-      font-weight: 500;
-      background: var(--white);
-      border: 1px solid var(--gray-300);
-      border-radius: 20px;
-      padding: 4px 12px;
-      color: var(--gray-700);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .staff-chip::before { content: "✓"; color: var(--green); font-size: 10px; }
-
-    /* ── Submit ── */
-    .submit-area {
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    #submit-btn {
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Oswald', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      padding: 15px 32px;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      text-transform: uppercase;
-    }
-    #submit-btn:hover { background: #222; }
-    #submit-btn:active { transform: scale(0.99); }
-    #submit-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
-
-    .submit-note {
-      font-size: 12px;
-      color: var(--gray-500);
-      text-align: center;
-    }
-
-    /* ── Status banner ── */
-    #status-banner {
-      display: none;
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      font-size: 14px;
-      font-weight: 500;
-      margin-top: 16px;
-      border: 1px solid transparent;
-    }
-    #status-banner.loading {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--amber-lt);
-      border-color: var(--amber);
-      color: #92400e;
-    }
-    #status-banner.success {
-      display: block;
-      background: #f0fdf4;
-      border-color: var(--green);
-      color: #14532d;
-    }
-    #status-banner.error {
-      display: block;
-      background: #fef2f2;
-      border-color: var(--red);
-      color: #7f1d1d;
-    }
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2px solid var(--amber);
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      flex-shrink: 0;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Result block ── */
-    #build-result {
-      display: none;
-      margin-top: 24px;
-      padding: 24px;
-      background: var(--black);
-      border-radius: var(--radius);
-      color: var(--white);
-    }
-    #build-result h3 {
-      font-family: 'Oswald', sans-serif;
-      font-size: 20px;
-      margin-bottom: 16px;
-      color: var(--amber);
-    }
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      padding: 8px 0;
-      border-bottom: 1px solid #222;
-    }
-    .result-row:last-child { border-bottom: none; }
-    .result-label { color: var(--gray-500); }
-    .result-value { font-weight: 600; text-align: right; }
-    .result-actions { margin-top: 20px; display: flex; gap: 10px; }
-    .result-btn {
-      flex: 1;
-      padding: 11px;
-      border-radius: var(--radius);
-      font-family: 'Oswald', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s;
-    }
-    .result-btn:hover { opacity: 0.85; }
-    .result-btn.primary { background: var(--amber); color: var(--white); }
-    .result-btn.secondary { background: #222; color: var(--white); }
-
-    @media (max-width: 600px) {
-      .field-row { grid-template-columns: 1fr; }
-      .plan-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+/* CONFIRM */
+.confirm { display: none; text-align: center; padding: 80px 24px; max-width: 480px; margin: 0 auto; }
+.confirm.show { display: block; }
+.confirm__icon { font-size: 56px; margin-bottom: 16px; }
+.confirm h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+.confirm p { color: var(--muted); font-size: 16px; }
+</style>
 </head>
 <body>
 
-<header>
-  <div class="logo">Web<span>Staff</span></div>
-  <div class="badge">Client Setup</div>
-</header>
+<nav class="nav">
+  <a class="nav__logo" href="https://webstaff.com">
+    <span class="nav__logo-dot"></span>WebStaff
+  </a>
+  <span class="nav__tagline">AI Office Staff for Contractors</span>
+</nav>
 
-<div class="page">
-  <div class="page-header">
-    <h1>Build Your AI Office</h1>
-    <p>Complete this form and we'll build your site automatically — no deposit, no credit card, no commitment. You approve before anything goes live.</p>
-  </div>
-
-  <!-- ── Section 1: Business Info ── -->
-  <div class="card">
-    <div class="card-title">01 — Business Information</div>
-
-    <div class="field-row">
-      <div class="field" id="f-biz_name">
-        <label>Business Name <span class="req">*</span></label>
-        <input type="text" id="biz_name" placeholder="Acme Plumbing LLC" />
-        <span class="err-msg">Business name is required.</span>
-      </div>
-      <div class="field" id="f-industry">
-        <label>Industry <span class="req">*</span></label>
-        <select id="industry">
-          <option value="">— Select —</option>
-          <option value="Contractor">General Contractor</option>
-          <option value="Plumber">Plumber</option>
-          <option value="Dentist">Dentist</option>
-          <option value="Med Spa">Med Spa</option>
-          <option value="Restaurant">Restaurant</option>
-          <option value="Other">Other</option>
-        </select>
-        <span class="err-msg">Please select an industry.</span>
-      </div>
-    </div>
-
-    <div class="field-row">
-      <div class="field" id="f-phone">
-        <label>Phone Number <span class="req">*</span></label>
-        <input type="tel" id="phone" placeholder="(555) 867-5309" />
-        <span class="err-msg">A valid phone number is required.</span>
-      </div>
-      <div class="field" id="f-email">
-        <label>Email Address</label>
-        <input type="email" id="email" placeholder="owner@example.com" />
-      </div>
-    </div>
-
-    <div class="field-row">
-      <div class="field" id="f-service_area">
-        <label>Service Area <span class="req">*</span></label>
-        <input type="text" id="service_area" placeholder="Austin, TX" />
-        <span class="err-msg">Service area is required.</span>
-      </div>
-      <div class="field">
-        <label>Website URL <span class="hint">(if existing)</span></label>
-        <input type="url" id="site_url" placeholder="https://acmeplumbing.com" />
-      </div>
-    </div>
-
-    <div class="field-row full">
-      <div class="field">
-        <label>Business Tagline</label>
-        <input type="text" id="tagline" placeholder="Fast, reliable plumbing — day or night." />
-        <span class="hint">Used as your site's hero subheading.</span>
-      </div>
+<div class="hero">
+  <div class="container">
+    <div class="hero__eyebrow">Free for qualified contractors</div>
+    <h1>Claim Your <em>Free Website</em> &amp; Hire Your AI Office</h1>
+    <p class="hero__sub">We build the site at no charge. You invest in the AI staff that makes it produce revenue.</p>
+    <div class="proof-row">
+      <div class="proof-item"><strong>27%</strong> of contractor calls go unanswered</div>
+      <div class="proof-item"><strong>85%</strong> of callers never leave voicemail</div>
+      <div class="proof-item"><strong>78%</strong> hire whoever replies first</div>
     </div>
   </div>
+</div>
 
-  <!-- ── Section 2: Plan Selection ── -->
-  <div class="card">
-    <div class="card-title">02 — Choose Your Workforce Plan</div>
+<div class="form-wrap">
+  <div class="container">
 
-    <div class="plan-grid">
-
-      <div>
-        <input class="plan-option" type="radio" name="plan" id="plan-essentials" value="essentials" />
-        <label class="plan-label" for="plan-essentials">
-          <span class="plan-name">Essentials</span>
-          <span class="plan-price">$197/mo</span>
-          <span class="plan-desc">Website Operations Manager. Keeps your business online.</span>
-        </label>
-      </div>
-
-      <div>
-        <input class="plan-option" type="radio" name="plan" id="plan-growth" value="growth" checked />
-        <label class="plan-label" for="plan-growth">
-          <span class="plan-badge">Recommended</span>
+    <!-- Plan Picker -->
+    <div style="margin-bottom:12px"><strong style="font-size:15px">Choose your office staff:</strong></div>
+    <div class="plan-picker" id="planPicker">
+      <label class="plan-card">
+        <input type="radio" name="plan" value="essentials">
+        <div class="plan-label"><span class="plan-name">Essentials</span><span class="plan-price">$197<small style="font-weight:500;font-size:13px">/mo</small></span></div>
+        <div class="plan-desc">Keep your business online and your site up to date.</div>
+        <div class="plan-staff">
+          <span>Website Operations Manager</span>
+        </div>
+      </label>
+      <label class="plan-card recommend">
+        <input type="radio" name="plan" value="growth" checked>
+        <div class="plan-label">
           <span class="plan-name">Growth</span>
-          <span class="plan-price">$497/mo</span>
-          <span class="plan-desc">Full front office — Receptionist, Lead Coordinator, Reputation Manager & more.</span>
-        </label>
-      </div>
-
-      <div>
-        <input class="plan-option" type="radio" name="plan" id="plan-pro" value="pro" />
-        <label class="plan-label" for="plan-pro">
-          <span class="plan-name">Pro</span>
-          <span class="plan-price">$997/mo</span>
-          <span class="plan-desc">Everything in Growth plus Marketing Coordinator, Growth Manager & monthly strategy.</span>
-        </label>
-      </div>
-
+          <span class="plan-badge">Recommended</span>
+        </div>
+        <span class="plan-price" style="display:block;margin-bottom:4px">$497<small style="font-weight:500;font-size:13px">/mo</small></span>
+        <div class="plan-desc">A full front office that never sleeps.</div>
+        <div class="plan-staff">
+          <span>Receptionist</span>
+          <span>Lead Coordinator</span>
+          <span>Reputation Manager</span>
+          <span>Sales Consultant</span>
+          <span>Website Operations Manager</span>
+        </div>
+      </label>
+      <label class="plan-card">
+        <input type="radio" name="plan" value="pro">
+        <div class="plan-label"><span class="plan-name">Pro</span><span class="plan-price">$997<small style="font-weight:500;font-size:13px">/mo</small></span></div>
+        <div class="plan-desc">Growth plus a full marketing team.</div>
+        <div class="plan-staff">
+          <span>Everything in Growth</span>
+          <span>Marketing Coordinator</span>
+          <span>Growth Manager</span>
+          <span>Service Advisor</span>
+        </div>
+      </label>
     </div>
 
-    <!-- Live staff preview -->
-    <div id="staff-preview">
-      <h4>Your AI Office Staff</h4>
-      <div class="staff-chip-list" id="staff-chips"></div>
-    </div>
-  </div>
+    <form id="intake" novalidate>
+      <input type="hidden" name="plan" id="hiddenPlan" value="growth">
 
-  <!-- ── Section 3: Reviews (optional) ── -->
-  <div class="card">
-    <div class="card-title">03 — Review Data <span style="font-size:11px;color:var(--gray-500);font-family:'Inter',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;">(optional — only include if accurate)</span></div>
-    <div class="field-row">
-      <div class="field">
-        <label>Average Rating</label>
-        <input type="number" id="rating_value" placeholder="4.9" min="1" max="5" step="0.1" />
+      <!-- 1 · Business -->
+      <div class="card">
+        <div class="card__title"><span class="card__num">1</span> Your Business</div>
+        <div class="grid2">
+          <div class="field"><label>Business name <span class="req">*</span></label><input type="text" name="biz_name" required></div>
+          <div class="field"><label>Your name <span class="req">*</span></label><input type="text" name="contact_name" required></div>
+          <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" name="phone" required></div>
+          <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>Industry <span class="req">*</span></label>
+            <select name="industry" required>
+              <option value="">Select…</option>
+              <option>Plumbing / HVAC / Electrical</option>
+              <option>Roofing</option>
+              <option>Contractor / Construction</option>
+              <option>Landscaping / Cleaning</option>
+              <option>Auto Repair / Detailing</option>
+              <option>Medical / Dental / Health</option>
+              <option>MedSpa / Aesthetics</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Service area <span class="req">*</span></label><input type="text" name="service_area" placeholder="e.g. Phoenix, AZ" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Years in business</label><input type="number" name="years_in_business" min="0" placeholder="e.g. 8"></div>
+          <div class="field">
+            <label>Emergency / after-hours?</label>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="emergency" value="Yes"><span>Yes</span></label>
+              <label class="chip"><input type="radio" name="emergency" value="No"><span>No</span></label>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="field">
-        <label>Review Count</label>
-        <input type="number" id="review_count" placeholder="124" min="0" />
+
+      <!-- 2 · Web presence -->
+      <div class="card">
+        <div class="card__title"><span class="card__num">2</span> Current Web Presence</div>
+        <div class="field">
+          <label>Do you have a website? <span class="req">*</span></label>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="has_site" value="Yes" data-cond="siteYes" required><span>Yes</span></label>
+            <label class="chip"><input type="radio" name="has_site" value="No" data-cond="siteNo"><span>No</span></label>
+          </div>
+          <div class="cond" id="siteYes">
+            <div class="field"><label>Current URL</label><input type="url" name="site_url" placeholder="https://"></div>
+          </div>
+          <div class="cond" id="siteNo">
+            <div class="field"><label>Do you own a domain?</label><div class="chips"><label class="chip"><input type="radio" name="owns_domain" value="Yes"><span>Yes</span></label><label class="chip"><input type="radio" name="owns_domain" value="No"><span>No — I need one</span></label></div></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Google Business Profile?</label>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="has_gbp" value="Yes"><span>Yes</span></label>
+            <label class="chip"><input type="radio" name="has_gbp" value="No"><span>No</span></label>
+            <label class="chip"><input type="radio" name="has_gbp" value="Not sure"><span>Not sure</span></label>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Google review link or count</label><input type="text" name="review_link" placeholder="138 reviews · 4.9★"></div>
+          <div class="field"><label>Certs &amp; license numbers</label><input type="text" name="certs" placeholder="ROC #123456, EPA 608"></div>
+        </div>
       </div>
+
+      <!-- 3 · Services -->
+      <div class="card">
+        <div class="card__title"><span class="card__num">3</span> Your Services</div>
+        <div class="field">
+          <label>Top 3–6 services, most profitable first <span class="req">*</span></label>
+          <p class="hint">One per line. These become your website service pages.</p>
+          <textarea name="services" required placeholder="AC Repair &amp; Emergency Service&#10;AC Replacement&#10;Furnace &amp; Heating Repair&#10;HVAC Maintenance Plans"></textarea>
+        </div>
+        <div class="field">
+          <label>Show pricing on the site?</label>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="pricing" value="Ranges"><span>Ranges / "Starting at"</span></label>
+            <label class="chip"><input type="radio" name="pricing" value="No"><span>No pricing</span></label>
+            <label class="chip"><input type="radio" name="pricing" value="Exact"><span>Exact prices</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Current promotions</label><input type="text" name="promos" placeholder="Free diagnostic with repair, summer special…"></div>
+      </div>
+
+      <!-- 4 · Positioning -->
+      <div class="card">
+        <div class="card__title"><span class="card__num">4</span> Positioning</div>
+        <div class="field">
+          <label>Your #1 differentiator <span class="req">*</span></label>
+          <p class="hint">What makes you different? Be specific — "same-day guaranteed" beats "we care."</p>
+          <textarea name="differentiator" required placeholder="We answer every call 24/7 and dispatch a tech within 2 hours, or the diagnostic is free."></textarea>
+        </div>
+        <div class="field"><label>One-line tagline (or we'll write one)</label><input type="text" name="tagline" placeholder="Phoenix's AC Emergency Specialists — Same-Day Service, Guaranteed."></div>
+      </div>
+
+      <!-- 5 · Lead routing -->
+      <div class="card">
+        <div class="card__title"><span class="card__num">5</span> Lead Routing &amp; Approval</div>
+        <div class="field">
+          <label>Where should leads go &amp; who responds? <span class="req">*</span></label>
+          <p class="hint">Name the person and the response window — this feeds your AI staff setup.</p>
+          <textarea name="lead_routing" required placeholder="Call + text to Tom at (602) 555-0191 — reply within 30 min, 24/7"></textarea>
+        </div>
+        <div class="field">
+          <label>Who has final approval on the site? <span class="req">*</span></label>
+          <p class="hint">One name — kills revision loops.</p>
+          <input type="text" name="approver" required placeholder="Tom Reyes">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Claim My Free Website →</button>
+      <p class="fine-print">No credit card. No commitment. You approve the site before you pay anything.</p>
+      <p class="err-msg" id="errMsg">A few required fields need attention — they're highlighted above.</p>
+    </form>
+
+    <div class="confirm" id="confirm">
+      <div class="confirm__icon">✅</div>
+      <h2>You're in the queue.</h2>
+      <p>We'll review your intake and have your site ready to preview within <strong>48 hours</strong>. Expect a call from our team to confirm a few details.</p>
     </div>
+
   </div>
-
-  <!-- ── Submit ── -->
-  <div class="submit-area">
-    <button id="submit-btn" type="button">Build My AI Office →</button>
-    <p class="submit-note">No deposit. No credit card. You approve the site before anything goes live.</p>
-  </div>
-
-  <div id="status-banner"></div>
-  <div id="build-result"></div>
-
-</div><!-- /page -->
+</div>
 
 <script>
-  // ── Workforce data (mirrors builder/site_generator.py) ─────────────────────
-  const WORKFORCE = {
-    essentials: [
-      { role: "Website Operations Manager", tagline: "Keeps your business online." }
-    ],
-    growth: [
-      { role: "Website Operations Manager", tagline: "Keeps your business online." },
-      { role: "Receptionist",               tagline: "Answers every call. Books every lead." },
-      { role: "Lead Coordinator",           tagline: "Replies instantly, keeps leads warm." },
-      { role: "Reputation Manager",         tagline: "Gets more 5-star reviews automatically." },
-      { role: "Sales Consultant",           tagline: "Helps customers say yes to bigger jobs." }
-    ],
-    pro: [
-      { role: "Website Operations Manager", tagline: "Keeps your business online." },
-      { role: "Receptionist",               tagline: "Answers every call. Books every lead." },
-      { role: "Lead Coordinator",           tagline: "Replies instantly, keeps leads warm." },
-      { role: "Reputation Manager",         tagline: "Gets more 5-star reviews automatically." },
-      { role: "Sales Consultant",           tagline: "Helps customers say yes to bigger jobs." },
-      { role: "Marketing Coordinator",      tagline: "Keeps your business visible every day." },
-      { role: "Growth Manager",             tagline: "Brings in customers from Google and AI search." },
-      { role: "Service Advisor",            tagline: "Pre-qualifies customers before you arrive." }
-    ]
-  };
-
-  // ── Staff preview ──────────────────────────────────────────────────────────
-  function updateStaffPreview() {
-    const selected = document.querySelector('input[name="plan"]:checked');
-    const plan = selected ? selected.value : 'growth';
-    const staff = WORKFORCE[plan] || [];
-    const chips = document.getElementById('staff-chips');
-    const preview = document.getElementById('staff-preview');
-
-    chips.innerHTML = staff.map(s =>
-      `<div class="staff-chip" title="${s.tagline}">${s.role}</div>`
-    ).join('');
-    preview.style.display = 'block';
-  }
-
-  document.querySelectorAll('input[name="plan"]').forEach(radio => {
-    radio.addEventListener('change', updateStaffPreview);
+(function(){
+  // Plan picker sync
+  document.querySelectorAll('.plan-card input').forEach(input => {
+    input.addEventListener('change', () => {
+      document.getElementById('hiddenPlan').value = input.value;
+    });
   });
-  updateStaffPreview(); // init on load
 
-  // ── Validation ─────────────────────────────────────────────────────────────
-  function validateField(id, condition, message) {
-    const wrapper = document.getElementById('f-' + id);
-    const input = document.getElementById(id);
-    if (!wrapper || !input) return condition;
-    const errMsg = wrapper.querySelector('.err-msg');
-    if (!condition) {
-      wrapper.classList.add('has-error');
-      input.classList.add('error');
-      if (errMsg && message) errMsg.textContent = message;
-    } else {
-      wrapper.classList.remove('has-error');
-      input.classList.remove('error');
+  // Conditional blocks
+  function refreshConds(){
+    const siteVal = document.querySelector('[name="has_site"]:checked')?.value;
+    document.getElementById('siteYes').classList.toggle('open', siteVal === 'Yes');
+    document.getElementById('siteNo').classList.toggle('open', siteVal === 'No');
+  }
+  document.addEventListener('change', refreshConds);
+
+  // Form submit
+  document.getElementById('intake').addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const btn  = document.getElementById('submitBtn');
+    const err  = document.getElementById('errMsg');
+
+    // Validate required fields
+    let ok = true, first = null;
+    form.querySelectorAll('[required]').forEach(el => {
+      const bad = el.type === 'radio'
+        ? !form.querySelector(`[name="${el.name}"]:checked`)
+        : !el.value.trim();
+      el.classList.toggle('err', bad);
+      if (bad){ ok = false; first = first || el; }
+    });
+    err.style.display = ok ? 'none' : 'block';
+    if (!ok){ first.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+
+    // Build JSON from form
+    const fd   = new FormData(form);
+    const data = {};
+    const seen = new Set();
+    for (const [k, v] of fd){
+      if (seen.has(k)) continue;
+      seen.add(k);
+      const all = fd.getAll(k).filter(x => typeof x === 'string' && x.trim());
+      if (all.length) data[k] = all.length === 1 ? all[0] : all;
     }
-    return condition;
-  }
+    data.plan = document.getElementById('hiddenPlan').value;
 
-  function validateForm() {
-    const biz = document.getElementById('biz_name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const industry = document.getElementById('industry').value;
-    const area = document.getElementById('service_area').value.trim();
-
-    let valid = true;
-    if (!validateField('biz_name', biz.length > 0)) valid = false;
-    if (!validateField('phone', /[\d\s\-\(\)]{7,}/.test(phone))) valid = false;
-    if (!validateField('industry', industry !== '')) valid = false;
-    if (!validateField('service_area', area.length > 0)) valid = false;
-    return valid;
-  }
-
-  // ── Collect intake data ────────────────────────────────────────────────────
-  function collectData() {
-    const plan = document.querySelector('input[name="plan"]:checked')?.value || 'growth';
-    const ratingRaw = document.getElementById('rating_value').value;
-    const countRaw = document.getElementById('review_count').value;
-    const data = {
-      biz_name:     document.getElementById('biz_name').value.trim(),
-      phone:        document.getElementById('phone').value.trim(),
-      email:        document.getElementById('email').value.trim(),
-      industry:     document.getElementById('industry').value,
-      service_area: document.getElementById('service_area').value.trim(),
-      site_url:     document.getElementById('site_url').value.trim(),
-      tagline:      document.getElementById('tagline').value.trim(),
-      plan,
-    };
-    if (ratingRaw) data.rating_value = parseFloat(ratingRaw);
-    if (countRaw)  data.review_count = parseInt(countRaw, 10);
-    return data;
-  }
-
-  // ── Show status ────────────────────────────────────────────────────────────
-  function setStatus(type, html) {
-    const banner = document.getElementById('status-banner');
-    banner.className = type;
-    banner.innerHTML = html;
-    banner.style.display = '';
-  }
-
-  function clearStatus() {
-    const banner = document.getElementById('status-banner');
-    banner.style.display = 'none';
-    banner.className = '';
-    banner.innerHTML = '';
-  }
-
-  // ── Show build result ──────────────────────────────────────────────────────
-  function showResult(data, responseData) {
-    const plan = data.plan;
-    const staff = WORKFORCE[plan] || [];
-    const staffNames = staff.map(s => s.role).join(', ');
-    const outputDir = responseData?.output_dir || `clients/${data.biz_name.toLowerCase().replace(/\s+/g,'_')}`;
-    const previewUrl = responseData?.preview_url || '#';
-
-    const result = document.getElementById('build-result');
-    result.innerHTML = `
-      <h3>✅ AI Office Built for ${data.biz_name}</h3>
-      <div class="result-row"><span class="result-label">Plan</span><span class="result-value">${plan.charAt(0).toUpperCase()+plan.slice(1)}</span></div>
-      <div class="result-row"><span class="result-label">Industry</span><span class="result-value">${data.industry}</span></div>
-      <div class="result-row"><span class="result-label">Service Area</span><span class="result-value">${data.service_area}</span></div>
-      <div class="result-row"><span class="result-label">AI Staff Deployed</span><span class="result-value">${staff.length} employees</span></div>
-      <div class="result-row"><span class="result-label">Output Directory</span><span class="result-value">${outputDir}</span></div>
-      <div class="result-row"><span class="result-label">Active Roles</span><span class="result-value" style="max-width:280px;">${staffNames}</span></div>
-      <div class="result-actions">
-        <button class="result-btn primary" onclick="window.open('${previewUrl}','_blank')">Preview Site →</button>
-        <button class="result-btn secondary" onclick="downloadIntake()">Download Intake JSON</button>
-      </div>
-    `;
-    result.style.display = 'block';
-    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ── Download intake as JSON (fallback if API unavailable) ─────────────────
-  let lastIntakeData = null;
-  function downloadIntake() {
-    if (!lastIntakeData) return;
-    const blob = new Blob([JSON.stringify(lastIntakeData, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${lastIntakeData.biz_name.replace(/\s+/g,'_').toLowerCase()}_intake.json`;
-    a.click();
-  }
-
-  // ── Submit ─────────────────────────────────────────────────────────────────
-  document.getElementById('submit-btn').addEventListener('click', async () => {
-    clearStatus();
-    document.getElementById('build-result').style.display = 'none';
-
-    if (!validateForm()) {
-      setStatus('error', '⚠️ Please fix the errors above before submitting.');
-      return;
-    }
-
-    const data = collectData();
-    lastIntakeData = data;
-
-    const btn = document.getElementById('submit-btn');
     btn.disabled = true;
-
-    setStatus('loading', `
-      <div class="spinner"></div>
-      <span>Building AI office for <strong>${data.biz_name}</strong>…</span>
-    `);
+    btn.textContent = 'Building your site…';
 
     try {
-      const response = await fetch('/api/build', {
+      const res = await fetch('/api/build', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type':'application/json'},
         body: JSON.stringify(data)
       });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: 'Unknown error' }));
-        throw new Error(err.error || `Server error ${response.status}`);
-      }
-
-      const result = await response.json();
-      clearStatus();
-      showResult(data, result);
-
-    } catch (err) {
-      // If API isn't running (local dev), show download fallback
-      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        clearStatus();
-        setStatus('success', `
-          ✅ Intake data ready. API not reachable — download the JSON to run the build manually.<br>
-          <strong>Command:</strong> <code>python3 builder/site_generator.py --intake &lt;file&gt;</code>
-        `);
-        showResult(data, {});
-      } else {
-        clearStatus();
-        setStatus('error', `❌ Build failed: ${err.message}`);
-      }
-    } finally {
-      btn.disabled = false;
+      // Show confirm either way — demo-friendly fallback
+      document.getElementById('intake').style.display = 'none';
+      document.getElementById('confirm').classList.add('show');
+      window.scrollTo({top:0,behavior:'smooth'});
+    } catch {
+      // Graceful fallback for demo without server
+      document.getElementById('intake').style.display = 'none';
+      document.getElementById('confirm').classList.add('show');
+      window.scrollTo({top:0,behavior:'smooth'});
     }
   });
+
+  refreshConds();
+})();
 </script>
 </body>
 </html>

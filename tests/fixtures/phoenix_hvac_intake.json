@@ -1,0 +1,32 @@
+{
+  "biz_name":        "Desert Air HVAC",
+  "contact_name":    "Tom Reyes",
+  "phone":           "(602) 555-0191",
+  "email":           "tom@desertairhvac.com",
+  "industry":        "Plumbing / HVAC / Electrical",
+  "service_area":    "Phoenix, AZ",
+  "years_in_business": "9",
+  "emergency":       "Yes",
+
+  "has_site":        "No",
+  "has_gbp":         "Yes",
+
+  "tagline":         "Phoenix's AC Emergency Specialists — Same-Day Service, Guaranteed.",
+  "differentiator":  "We answer every call 24/7 and dispatch a tech within 2 hours, or the diagnostic is free.",
+  "tone":            "Bold",
+
+  "services": "AC Repair & Emergency Service\nAC Replacement & Installation\nFurnace & Heating Repair\nMini-Split Installation\nAir Quality & UV Systems\nHVAC Maintenance Plans",
+
+  "pricing":         "Ranges",
+  "promos":          "Free diagnostic with any repair — summer special",
+  "certs":           "ROC #123456 | EPA 608 Certified | Trane Comfort Specialist",
+
+  "goal":            "Phone calls",
+  "lead_routing":    "Call + text to Tom at (602) 555-0191 — reply within 30 min, 24/7",
+  "approver":        "Tom Reyes",
+
+  "plan":            "growth",
+
+  "rating_value":    4.9,
+  "review_count":    138
+}

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebStaff Sales Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0b1120;--blue:#1d4ed8;--blue-lt:#dbeafe;--green:#16a34a;--green-lt:#f0fdf4;
+  --amber:#d97706;--red:#dc2626;--bone:#f8f5ef;--white:#fff;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;--r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bone);color:var(--text);min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* ── NAV ── */
+.nav{background:var(--navy);padding:0 20px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;}
+.nav__logo{color:white;font-weight:800;font-size:16px;display:flex;align-items:center;gap:7px;}
+.nav__dot{width:8px;height:8px;border-radius:50%;background:#60a5fa;}
+.nav__label{font-size:12px;color:rgba(255,255,255,.4);margin-left:4px;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;background:var(--white);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;}
+.tab{padding:14px 16px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+
+/* ── PANELS ── */
+.panel{display:none;padding:20px;max-width:780px;margin:0 auto;}
+.panel.active{display:block;}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:16px;}
+.card__title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card__title .icon{font-size:18px;}
+
+/* ── FIELDS ── */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font:inherit;font-size:14px;background:white;}
+.field input:focus,.field select:focus{outline:none;border-color:var(--blue);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.grid2{grid-template-columns:1fr;}}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;border:none;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn--primary{background:var(--blue);color:white;}.btn--primary:hover{background:#2563eb;}
+.btn--green{background:var(--green);color:white;}.btn--green:hover{background:#15803d;}
+.btn--full{width:100%;justify-content:center;}
+
+/* ── RESULT BOX ── */
+.result{margin-top:14px;padding:16px;border-radius:8px;background:var(--green-lt);border:1px solid #86efac;display:none;}
+.result.show{display:block;}
+.result__headline{font-size:22px;font-weight:800;color:var(--green);margin-bottom:4px;}
+.result__sub{font-size:13px;color:var(--muted);}
+.result__row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:14px;}
+.result__row:last-child{border:none;}
+.result__val{font-weight:700;}
+
+/* ── PITCH BOX ── */
+.pitch-box{background:var(--navy);color:white;border-radius:var(--r);padding:20px;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word;position:relative;margin-top:12px;}
+.copy-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.copy-btn:hover{background:rgba(255,255,255,.2);}
+.copy-btn.copied{color:#86efac;border-color:#86efac;}
+
+/* ── OBJECTION TABLE ── */
+.obj-table{width:100%;border-collapse:collapse;}
+.obj-table th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);}
+.obj-table td{padding:14px 12px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:top;}
+.obj-table tr:last-child td{border:none;}
+.obj-table td:first-child{font-weight:600;color:var(--red);width:38%;}
+.obj-table td:last-child{color:var(--muted);}
+
+/* ── CALL TRACKER ── */
+.tracker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.tracker-stat{background:white;border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;}
+.tracker-stat__num{font-size:28px;font-weight:800;color:var(--navy);}
+.tracker-stat__label{font-size:11px;color:var(--muted);}
+.tracker-btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.outcome-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:white;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.outcome-btn:hover{border-color:var(--navy);background:var(--navy);color:white;}
+.call-log{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;}
+.call-log li{font-size:13px;padding:8px 12px;background:white;border:1px solid var(--border);border-radius:6px;display:flex;justify-content:space-between;}
+.call-log .ts{color:var(--muted);}
+@media(max-width:520px){.tracker-grid{grid-template-columns:1fr 1fr;}}
+
+/* ── CHART CONTAINER ── */
+.chart-wrap{position:relative;height:260px;margin-top:8px;}
+
+/* ── BADGE ── */
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.badge--green{background:var(--green-lt);color:var(--green);}
+.badge--blue{background:var(--blue-lt);color:var(--blue);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__logo"><span class="nav__dot"></span>WebStaff</div>
+  <span class="nav__label">Sales Tool · Internal Use Only</span>
+</nav>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('calculator')">💰 Revenue Calculator</button>
+  <button class="tab" onclick="showPanel('pitch')">🗣 Pitch Generator</button>
+  <button class="tab" onclick="showPanel('objections')">🛡 Objections</button>
+  <button class="tab" onclick="showPanel('roi')">📈 ROI &amp; Charts</button>
+  <button class="tab" onclick="showPanel('tracker')">📞 Call Tracker</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 1 — REVENUE CALCULATOR
+     ════════════════════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-calculator">
+
+  <div class="card">
+    <div class="card__title"><span class="icon">📞</span>Missed Call Revenue Calculator</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Trade / Industry</label>
+        <select id="calc-trade">
+          <option value="1500">HVAC / Plumbing / Electrical</option>
+          <option value="8000">Roofing</option>
+          <option value="3000">General Contractor</option>
+          <option value="1200">Landscaping / Cleaning</option>
+          <option value="2000">Auto Repair / Detailing</option>
+          <option value="2500">Medical / Dental</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Missed calls / month</label>
+        <input type="number" id="calc-missed" placeholder="e.g. 20" min="0">
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Close rate (%)</label>
+        <input type="number" id="calc-close" value="35" min="1" max="100">
+      </div>
+      <div class="field">
+        <label>Average job value ($)</label>
+        <input type="number" id="calc-ticket" placeholder="Auto-fills from trade" min="0">
+      </div>
+    </div>
+    <button class="btn btn--primary btn--full" onclick="calcMissed()">Calculate Lost Revenue</button>
+    <div class="result" id="missed-result">
+      <div class="result__headline" id="miss-total"></div>
+      <div class="result__sub" id="miss-sub"></div>
+      <div style="margin-top:12px">
+        <div class="result__row"><span>Missed calls/mo</span><span class="result__val" id="miss-r1"></span></div>
+        <div class="result__row"><span>Calls that would have closed</span><span class="result__val" id="miss-r2"></span></div>
+        <div class="result__row"><span>Lost revenue/month</span><span class="result__val" id="miss-r3"></span></div>
+        <div class="result__row"><span>Lost revenue/year</span><span class="result__val" id="miss-r4"></span></div>
+        <div class="result__row"><span>Growth plan cost/year</span><span class="result__val">$5,964</span></div>
+        <div class="result__row"><span>Net gain/year (1 job recovered)</span><span class="result__val" id="miss-r5"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card__title"><span class="icon">👤</span>Human Receptionist vs WebStaff</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Receptionist salary ($/hr)</label>
+        <input type="number" id="rep-wage" value="18" min="0">
+      </div>
+      <div class="field">
+        <label>Hours / week</label>
+        <input type="number" id="rep-hours" value="40" min="0">
+      </div>
+    </div>
+    <button class="btn btn--primary btn--full" onclick="calcRep()">Compare Costs</button>
+    <div class="result" id="rep-result">
+      <div class="result__row"><span>Human receptionist/year (salary + tax + benefits est.)</span><span class="result__val" id="rep-r1"></span></div>
+      <div class="result__row"><span>WebStaff Growth/year</span><span class="result__val">$5,964</span></div>
+      <div class="result__row"><span>Annual savings</span><span class="result__val" id="rep-r2" style="color:var(--green)"></span></div>
+      <div class="result__row"><span>WebStaff advantage</span><span class="result__val" id="rep-r3"></span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 2 — PITCH GENERATOR
+     ════════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-pitch">
+
+  <div class="card">
+    <div class="card__title"><span class="icon">🗣</span>Generate a Custom Pitch</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Business name</label>
+        <input type="text" id="pitch-biz" placeholder="Desert Air HVAC">
+      </div>
+      <div class="field">
+        <label>Owner / contact name</label>
+        <input type="text" id="pitch-name" placeholder="Tom">
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Trade / industry</label>
+        <select id="pitch-trade">
+          <option value="HVAC">HVAC</option>
+          <option value="Plumbing">Plumbing</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Electrical">Electrical</option>
+          <option value="General Contracting">General Contracting</option>
+          <option value="Landscaping">Landscaping</option>
+          <option value="Auto Repair">Auto Repair</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>City</label>
+        <input type="text" id="pitch-city" placeholder="Phoenix">
+      </div>
+    </div>
+    <div class="field">
+      <label>Pitch type</label>
+      <select id="pitch-type">
+        <option value="30sec">30-Second Cold Call</option>
+        <option value="2min">2-Minute Full Pitch</option>
+        <option value="email">Cold Email (Segment A — no website)</option>
+        <option value="email-b">Cold Email (Segment B — has website)</option>
+        <option value="followup">Day-3 Follow-Up</option>
+        <option value="upgrade">Month-1 Upgrade Pitch</option>
+      </select>
+    </div>
+    <button class="btn btn--primary btn--full" onclick="generatePitch()">Generate Pitch</button>
+    <div id="pitch-output" style="display:none">
+      <div class="pitch-box" id="pitch-text">
+        <button class="copy-btn" onclick="copyPitch()">Copy</button>
+        <span id="pitch-content"></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 3 — OBJECTIONS
+     ════════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-objections">
+
+  <div class="card">
+    <div class="card__title"><span class="icon">🛡</span>Objection Handler</div>
+    <table class="obj-table">
+      <thead><tr><th>Objection</th><th>Your Response</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>"I already have a receptionist."</td>
+          <td>Does she answer at 2am when the AC dies? WebStaff handles after-hours, weekends, and every call while your team's on the job. She keeps her job — we cover the gaps she can't.</td>
+        </tr>
+        <tr>
+          <td>"Too expensive."</td>
+          <td>A human receptionist runs $3,500/month fully loaded. WebStaff Growth is $497 — about what you make on a single service call. You only need to recover one job a month to break even.</td>
+        </tr>
+        <tr>
+          <td>"I get all my work from referrals."</td>
+          <td>Referrals still Google you before calling. Half of them find the next contractor when you don't show up in search. The site makes sure you're there — and the AI makes sure you respond first.</td>
+        </tr>
+        <tr>
+          <td>"I don't trust AI."</td>
+          <td>Your customers never know it's AI — they just experience a fast, professional response. The calls come to your phone; we just make sure every one gets answered and followed up. You stay in control.</td>
+        </tr>
+        <tr>
+          <td>"I'll think about it."</td>
+          <td>Totally fair. While you're thinking, your competitor who just signed up is answering every after-hours call in your zip code. The website is free — there's no risk in starting today.</td>
+        </tr>
+        <tr>
+          <td>"I already have a website."</td>
+          <td>Let me pull it up real quick. [Run PageSpeed audit.] Your site loads in [X] seconds on mobile — Google's threshold is 3. That means you're losing more than half your mobile visitors before the page even loads. We rebuild it and fix all of that, free.</td>
+        </tr>
+        <tr>
+          <td>"We're not taking on new customers."</td>
+          <td>That's the best problem to have. The AI can handle vetting — it qualifies callers and filters out the low-margin jobs so your crew stays on the high-value work. Worth a 15-minute call?</td>
+        </tr>
+        <tr>
+          <td>"I tried something like this before and it didn't work."</td>
+          <td>What happened? [Listen.] That's different from what we do because [specific contrast]. We also give you the site free so if it doesn't deliver in 30 days, you've paid nothing and kept the site.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 4 — ROI CHARTS
+     ════════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-roi">
+
+  <div class="card">
+    <div class="card__title"><span class="icon">📊</span>Annual Value by Plan</div>
+    <div class="chart-wrap"><canvas id="roiChart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card__title"><span class="icon">🧮</span>Personalised ROI Calculator</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Plan</label>
+        <select id="roi-plan">
+          <option value="197">Essentials — $197/mo</option>
+          <option value="497" selected>Growth — $497/mo</option>
+          <option value="997">Pro — $997/mo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Monthly revenue ($)</label>
+        <input type="number" id="roi-revenue" placeholder="e.g. 45000" min="0">
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Missed calls / month</label>
+        <input type="number" id="roi-missed" placeholder="e.g. 15" min="0">
+      </div>
+      <div class="field">
+        <label>Avg job value ($)</label>
+        <input type="number" id="roi-ticket" placeholder="e.g. 1200" min="0">
+      </div>
+    </div>
+    <button class="btn btn--primary btn--full" onclick="calcROI()">Calculate ROI</button>
+    <div class="result" id="roi-result">
+      <div class="result__headline" id="roi-headline"></div>
+      <div class="result__sub" id="roi-sub"></div>
+      <div style="margin-top:12px">
+        <div class="result__row"><span>Annual plan cost</span><span class="result__val" id="roi-r1"></span></div>
+        <div class="result__row"><span>Recoverable revenue (captured calls)</span><span class="result__val" id="roi-r2"></span></div>
+        <div class="result__row"><span>Net annual ROI</span><span class="result__val" id="roi-r3" style="color:var(--green)"></span></div>
+        <div class="result__row"><span>Return on investment</span><span class="result__val" id="roi-r4" style="color:var(--green)"></span></div>
+        <div class="result__row"><span>Payback period</span><span class="result__val" id="roi-r5"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card__title"><span class="icon">💸</span>Commission Calculator</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Plan sold</label>
+        <select id="comm-plan">
+          <option value="197">Essentials — $197/mo</option>
+          <option value="497" selected>Growth — $497/mo</option>
+          <option value="997">Pro — $997/mo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Deals closed this month</label>
+        <input type="number" id="comm-deals" placeholder="e.g. 5" min="0">
+      </div>
+    </div>
+    <button class="btn btn--primary btn--full" onclick="calcComm()">Calculate Earnings</button>
+    <div class="result" id="comm-result">
+      <div class="result__row"><span>Commission rate</span><span class="result__val">20%</span></div>
+      <div class="result__row"><span>Commission per deal</span><span class="result__val" id="comm-r1"></span></div>
+      <div class="result__row"><span>This month</span><span class="result__val" id="comm-r2"></span></div>
+      <div class="result__row"><span>Annual run rate (same pace)</span><span class="result__val" id="comm-r3"></span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 5 — CALL TRACKER
+     ════════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-tracker">
+
+  <div class="card">
+    <div class="card__title"><span class="icon">📞</span>Today's Call Log</div>
+    <div class="tracker-grid">
+      <div class="tracker-stat"><div class="tracker-stat__num" id="t-total">0</div><div class="tracker-stat__label">Calls Made</div></div>
+      <div class="tracker-stat"><div class="tracker-stat__num" id="t-pitched">0</div><div class="tracker-stat__label">Pitched</div></div>
+      <div class="tracker-stat"><div class="tracker-stat__num" id="t-interested">0</div><div class="tracker-stat__label">Interested</div></div>
+      <div class="tracker-stat"><div class="tracker-stat__num" id="t-closed">0</div><div class="tracker-stat__label">Closed</div></div>
+    </div>
+
+    <div class="field">
+      <label>Business name</label>
+      <input type="text" id="track-biz" placeholder="e.g. Desert Air HVAC">
+    </div>
+    <div class="tracker-btn-row">
+      <button class="outcome-btn" onclick="logCall('No Answer')">No Answer</button>
+      <button class="outcome-btn" onclick="logCall('Pitched')">Pitched</button>
+      <button class="outcome-btn" onclick="logCall('Interested — follow up')">Interested</button>
+      <button class="outcome-btn" onclick="logCall('Not Interested')">Not Interested</button>
+      <button class="outcome-btn" style="background:var(--green);color:white;border-color:var(--green)" onclick="logCall('CLOSED')">🎉 Closed</button>
+    </div>
+
+    <ul class="call-log" id="call-log"></ul>
+
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn btn--primary" onclick="exportLog()">Export CSV</button>
+      <button class="btn" style="background:var(--border);color:var(--text)" onclick="clearLog()">Clear</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── TAB NAVIGATION ──────────────────────────────────────────────── */
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'roi') setTimeout(initCharts, 100);
+}
+
+/* ── FORMATTERS ──────────────────────────────────────────────────── */
+const $  = id => document.getElementById(id);
+const fmt = n => '$' + Math.round(n).toLocaleString();
+
+/* ── TRADE TICKET MAP ────────────────────────────────────────────── */
+const TICKETS = { '1500':1500, '8000':8000, '3000':3000, '1200':1200, '2000':2000, '2500':2500 };
+
+/* ── CALCULATOR 1: MISSED CALLS ──────────────────────────────────── */
+function calcMissed() {
+  const tradeVal = $('calc-trade').value;
+  const ticket   = parseFloat($('calc-ticket').value) || TICKETS[tradeVal] || 1500;
+  const missed   = parseFloat($('calc-missed').value) || 0;
+  const close    = (parseFloat($('calc-close').value) || 35) / 100;
+
+  if (!missed) { alert('Enter the number of missed calls per month.'); return; }
+
+  $('calc-ticket').placeholder = ticket;
+  const closedCalls    = missed * close;
+  const lostMonthly    = closedCalls * ticket;
+  const lostAnnual     = lostMonthly * 12;
+  const netGain        = lostMonthly - 497; // growth plan
+
+  $('miss-total').textContent  = `${fmt(lostMonthly)} lost per month`;
+  $('miss-sub').textContent    = `Based on ${missed} missed calls, ${(close*100).toFixed(0)}% close rate, ${fmt(ticket)} avg job.`;
+  $('miss-r1').textContent     = missed;
+  $('miss-r2').textContent     = closedCalls.toFixed(1);
+  $('miss-r3').textContent     = fmt(lostMonthly);
+  $('miss-r4').textContent     = fmt(lostAnnual);
+  $('miss-r5').textContent     = fmt(lostMonthly - 497);
+
+  const r = $('missed-result');
+  r.classList.add('show');
+}
+
+/* ── CALCULATOR 2: RECEPTIONIST ──────────────────────────────────── */
+function calcRep() {
+  const wage  = parseFloat($('rep-wage').value)  || 18;
+  const hours = parseFloat($('rep-hours').value) || 40;
+
+  const annualSalary  = wage * hours * 52;
+  const totalCost     = annualSalary * 1.28; // ~28% overhead (payroll tax, benefits)
+  const webstaffCost  = 497 * 12;
+  const savings       = totalCost - webstaffCost;
+  const multiplier    = (totalCost / webstaffCost).toFixed(1);
+
+  $('rep-r1').textContent = fmt(totalCost) + '/yr';
+  $('rep-r2').textContent = fmt(savings) + '/yr';
+  $('rep-r3').textContent = `WebStaff is ${multiplier}× cheaper and available 24/7`;
+
+  const r = $('rep-result');
+  r.classList.add('show');
+}
+
+/* ── PITCH GENERATOR ─────────────────────────────────────────────── */
+const PITCHES = {
+  '30sec': (biz, name, trade, city) =>
+`Hey ${name}, quick question — when an emergency ${trade.toLowerCase()} call comes in after hours, who answers?
+
+I build AI office staff for ${trade} businesses in ${city}. We give you a free website and an AI receptionist that answers every call 24/7, follows up leads in under 5 minutes, and earns you Google reviews automatically.
+
+Free to set up. $497/month to keep your AI team active. Takes about 48 hours.
+
+Worth a 15-minute call this week?`,
+
+  '2min': (biz, name, trade, city) =>
+`Hey ${name}, my name's [YOUR NAME] — I run WebStaff.
+
+I'm reaching out specifically to ${trade} businesses in ${city} because I keep seeing the same problem: great contractors losing jobs they've already paid to generate, just because nobody answers after hours.
+
+Here's what we do: we build you a complete, custom website — free. No cost, no credit card. In 48 hours you have a site with your services, your reviews, and a contact form that fires a text to your phone the instant someone fills it out.
+
+Then, if you want to take it further, we activate your AI office staff — a Receptionist that answers every call 24/7, a Lead Coordinator that replies to inquiries in under 5 minutes, and a Reputation Manager that earns you Google reviews after every job. All for $497/month — about what you make on a single ${trade.toLowerCase()} call.
+
+Here's the math: if you're missing 15 calls a month and closing 35% of the ones you do answer, that's roughly $7,000/month in jobs going to your competitor. The plan pays for itself with one recovered call.
+
+The site is free either way. Want me to build it and show you before you commit to anything?`,
+
+  'email': (biz, name, trade, city) =>
+`Subject: Free website for ${biz}
+
+Hey ${name},
+
+I build custom websites for ${trade} businesses in ${city} — and I'm giving them away free right now.
+
+Here's how it works: I build ${biz} a complete site with your services, your reviews, and a lead form that texts you the second someone fills it out. You see it. If you like it, you pay $497/month for the AI office staff that runs it. If you don't, you owe nothing.
+
+No credit card. No contract. No commitment.
+
+${biz} came up in my ${city} ${trade} search without a website — which means you're invisible to every homeowner who finds you on Google before calling.
+
+It takes one form and 48 hours: [INTAKE LINK]
+
+— [YOUR NAME]
+WebStaff
+(Unsubscribe: reply STOP)
+WebStaff · [ADDRESS] · ${city}`,
+
+  'email-b': (biz, name, trade, city) =>
+`Subject: ${biz}'s site — quick audit
+
+Hey ${name},
+
+I ran a quick audit of ${biz}'s website. A few things jumped out:
+
+· Mobile load time: [X] seconds (Google's threshold is 3s — you're losing visitors)
+· [AUDIT FINDING 2]
+· [AUDIT FINDING 3]
+
+Slow sites lose 53% of mobile visitors before the page loads. For an emergency ${trade.toLowerCase()} call at 11pm, that's a job going to the next result.
+
+We rebuild it for free and fix all of this. You pay $497/month for the AI staff that answers the calls it generates.
+
+Full report + free rebuild: [INTAKE LINK]
+
+— [YOUR NAME]
+WebStaff
+(Unsubscribe: reply STOP)`,
+
+  'followup': (biz, name, trade, city) =>
+`Hey ${name} — following up on my message from a few days ago.
+
+Quick question: when a homeowner in ${city} searches for ${trade.toLowerCase()} at midnight because their system's down — who answers your phone?
+
+If it goes to voicemail, that job goes to whoever responds first. That's usually the competitor with an AI receptionist.
+
+The website is still free. 15 minutes this week?
+
+— [YOUR NAME]`,
+
+  'upgrade': (biz, name, trade, city) =>
+`Subject: ${biz}'s first month results
+
+Hey ${name},
+
+Your site's been live for 30 days. Here's what happened:
+
+· [X] visitors from Google
+· [X] form submissions  
+· [X] calls tracked to your site
+
+Want to keep the momentum going? You're on Essentials at $197/month.
+
+Upgrade to Growth ($497/month) and we activate your full AI office:
+✓ Receptionist — answers every call 24/7
+✓ Lead Coordinator — replies in under 5 minutes
+✓ Reputation Manager — earns Google reviews after every job
+✓ Sales Consultant — follows up fence-sitting leads
+
+Most contractors who upgrade to Growth recover the cost difference within the first week.
+
+Reply and I'll activate the team same day.
+
+— [YOUR NAME]`,
+};
+
+function generatePitch() {
+  const biz   = $('pitch-biz').value   || '[Business Name]';
+  const name  = $('pitch-name').value  || '[Name]';
+  const trade = $('pitch-trade').value || 'HVAC';
+  const city  = $('pitch-city').value  || '[City]';
+  const type  = $('pitch-type').value;
+
+  const fn = PITCHES[type];
+  const text = fn ? fn(biz, name, trade, city) : 'Select a pitch type.';
+
+  $('pitch-content').textContent = text;
+  $('pitch-output').style.display = 'block';
+}
+
+function copyPitch() {
+  const text = $('pitch-content').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ── ROI CALCULATOR ──────────────────────────────────────────────── */
+function calcROI() {
+  const plan    = parseFloat($('roi-plan').value)    || 497;
+  const revenue = parseFloat($('roi-revenue').value) || 0;
+  const missed  = parseFloat($('roi-missed').value)  || 0;
+  const ticket  = parseFloat($('roi-ticket').value)  || 1500;
+
+  if (!missed && !revenue) { alert('Enter your monthly revenue or missed calls.'); return; }
+
+  const annualCost     = plan * 12;
+  const recoverable    = missed * 0.35 * ticket * 12; // 35% close
+  const roi            = recoverable - annualCost;
+  const roiPct         = annualCost > 0 ? ((roi / annualCost) * 100).toFixed(0) : 0;
+  const payback        = roi > 0 ? (annualCost / (recoverable / 12)).toFixed(1) : 'N/A';
+
+  $('roi-headline').textContent = roi > 0 ? fmt(roi) + ' net annual ROI' : 'Marginal — review inputs';
+  $('roi-sub').textContent = `Based on ${fmt(ticket)} avg job, 35% close rate assumption.`;
+  $('roi-r1').textContent = fmt(annualCost);
+  $('roi-r2').textContent = fmt(recoverable);
+  $('roi-r3').textContent = fmt(roi);
+  $('roi-r4').textContent = roiPct + '×';
+  $('roi-r5').textContent = payback !== 'N/A' ? payback + ' months' : 'N/A';
+
+  $('roi-result').classList.add('show');
+}
+
+/* ── COMMISSION CALCULATOR ───────────────────────────────────────── */
+function calcComm() {
+  const plan  = parseFloat($('comm-plan').value)  || 497;
+  const deals = parseFloat($('comm-deals').value) || 0;
+  const rate  = 0.20;
+
+  const perDeal = plan * rate;
+  const monthly = perDeal * deals;
+  const annual  = monthly * 12;
+
+  $('comm-r1').textContent = fmt(perDeal);
+  $('comm-r2').textContent = fmt(monthly);
+  $('comm-r3').textContent = fmt(annual);
+  $('comm-result').classList.add('show');
+}
+
+/* ── CHARTS ──────────────────────────────────────────────────────── */
+let chartsInit = false;
+function initCharts() {
+  if (chartsInit) return;
+  chartsInit = true;
+
+  const ctx = $('roiChart')?.getContext('2d');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Essentials $197/mo', 'Growth $497/mo', 'Pro $997/mo'],
+      datasets: [
+        {
+          label: 'Annual Plan Cost',
+          data: [197*12, 497*12, 997*12],
+          backgroundColor: 'rgba(30,64,175,.25)',
+          borderColor: '#1d4ed8',
+          borderWidth: 2,
+          borderRadius: 6,
+        },
+        {
+          label: 'Recoverable Revenue (20 missed calls · $1,500 ticket)',
+          data: [20*0.35*1500*12, 20*0.35*1500*12, 20*0.35*1500*12],
+          backgroundColor: 'rgba(22,163,74,.2)',
+          borderColor: '#16a34a',
+          borderWidth: 2,
+          borderRadius: 6,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' $' + ctx.parsed.y.toLocaleString()
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' }
+        }
+      }
+    }
+  });
+}
+
+/* ── CALL TRACKER ────────────────────────────────────────────────── */
+let callLog = JSON.parse(localStorage.getItem('ws_calls') || '[]');
+const counts = { total:0, pitched:0, interested:0, closed:0 };
+
+function logCall(outcome) {
+  const biz = $('track-biz').value || '(unnamed)';
+  const ts  = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const entry = { biz, outcome, ts };
+
+  callLog.push(entry);
+  try { localStorage.setItem('ws_calls', JSON.stringify(callLog)); } catch {}
+
+  counts.total++;
+  if (outcome === 'Pitched')                   counts.pitched++;
+  if (outcome === 'Interested — follow up')    counts.interested++;
+  if (outcome === 'CLOSED')                    counts.closed++;
+
+  $('t-total').textContent      = counts.total;
+  $('t-pitched').textContent    = counts.pitched;
+  $('t-interested').textContent = counts.interested;
+  $('t-closed').textContent     = counts.closed;
+
+  const li = document.createElement('li');
+  li.innerHTML = `<span><strong>${biz}</strong> — ${outcome}</span><span class="ts">${ts}</span>`;
+  $('call-log').prepend(li);
+
+  $('track-biz').value = '';
+  $('track-biz').focus();
+}
+
+function exportLog() {
+  if (!callLog.length) { alert('No calls logged yet.'); return; }
+  const rows = [['Business', 'Outcome', 'Time'], ...callLog.map(e => [e.biz, e.outcome, e.ts])];
+  const csv  = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `webstaff-calls-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function clearLog() {
+  if (!confirm('Clear today\'s call log?')) return;
+  callLog = [];
+  try { localStorage.removeItem('ws_calls'); } catch {}
+  $('call-log').innerHTML = '';
+  Object.keys(counts).forEach(k => counts[k] = 0);
+  ['t-total','t-pitched','t-interested','t-closed'].forEach(id => $(id).textContent = '0');
+}
+
+// Restore log on load
+callLog.forEach(e => {
+  counts.total++;
+  if (e.outcome === 'Pitched')                 counts.pitched++;
+  if (e.outcome === 'Interested — follow up')  counts.interested++;
+  if (e.outcome === 'CLOSED')                  counts.closed++;
+  const li = document.createElement('li');
+  li.innerHTML = `<span><strong>${e.biz}</strong> — ${e.outcome}</span><span class="ts">${e.ts}</span>`;
+  $('call-log').appendChild(li);
+});
+$('t-total').textContent      = counts.total;
+$('t-pitched').textContent    = counts.pitched;
+$('t-interested').textContent = counts.interested;
+$('t-closed').textContent     = counts.closed;
+</script>
+</body>
+</html>

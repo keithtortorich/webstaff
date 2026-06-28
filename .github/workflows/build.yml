@@ -1,39 +1,32 @@
-name: WebStaff CI — Validate & Build
+name: Build & Validate
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     branches: [main]
 
-env:
-  PYTHON_VERSION: "3.11"
-
 jobs:
-  validate:
-    name: Validate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - run: pip install -r requirements.txt
-      - run: python3 builder/site_generator.py --intake tests/fixtures/example_intake.json --validate
-
   build:
-    name: Build Test Site
     runs-on: ubuntu-latest
-    needs: validate
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - run: pip install -r requirements.txt
-      - run: python3 builder/site_generator.py --intake tests/fixtures/example_intake.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: webstaff-test-build
-          path: clients/
-          retention-days: 7
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate example intake
+        run: python3 builder/site_generator.py --intake tests/fixtures/phoenix_hvac_intake.json --validate
+
+      - name: Build example site
+        run: python3 builder/site_generator.py --intake tests/fixtures/phoenix_hvac_intake.json
+
+      - name: Confirm output
+        run: |
+          ls clients/
+          echo "Build succeeded ✅"
