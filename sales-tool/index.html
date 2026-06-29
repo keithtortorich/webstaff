@@ -6,7 +6,7 @@
 <title>WebStaff Sales Tool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+
 <style>
 :root{
   --navy:#0b1120;--blue:#1d4ed8;--blue-lt:#dbeafe;--green:#16a34a;--green-lt:#f0fdf4;
@@ -401,6 +401,7 @@ a{color:inherit;text-decoration:none;}
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script>
 /* ── TAB NAVIGATION ──────────────────────────────────────────────── */
 function showPanel(id) {
@@ -636,6 +637,7 @@ function calcComm() {
 let chartsInit = false;
 function initCharts() {
   if (chartsInit) return;
+  if (typeof Chart === 'undefined') { setTimeout(initCharts, 150); return; }
   chartsInit = true;
 
   const ctx = $('roiChart')?.getContext('2d');

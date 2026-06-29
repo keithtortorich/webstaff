@@ -1,7 +1,7 @@
 """
 WebStaff Agent: Growth Manager
-Dept: Marketing | Plans: pro
-Trigger: Weekly cron + on-demand
+Celery task — calls workflows.call_agent() then fires real tool actions.
+See agents/growth_manager/spec.md for full spec.
 """
 import logging
 import json
@@ -9,35 +9,56 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """Local SEO specialist. Review this GBP data and write optimized service descriptions and a weekly post. Use natural language matching how customers search. Include city and trade keywords naturally."""
+# Import the central agent caller
+try:
+    from agents.workflows import call_agent
+except ImportError:
+    # Running standalone
+    import sys, os
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    from agents.workflows import call_agent
 
 
 def handle(event: dict) -> dict:
     """
-    Handle a Growth Manager event.
-
-    Args:
-        event: Trigger payload dict (see spec.md for schema)
-    Returns:
-        dict: success, output, actions_taken, timestamp
+    Handle a growth_manager event.
+    Replace the TODOs below with real tool calls (Twilio, GBP API, etc.)
+    See agents/growth_manager/spec.md for the full tool list and success metric.
     """
-    logger.info("Growth Manager triggered", extra={"event": event.get("type")})
+    logger.info("growth_manager triggered", extra={"event_type": event.get("type")})
 
-    # TODO: implement
-    # 1. Validate event payload
-    # 2. OpenAI call with SYSTEM_PROMPT + event context
-    # 3. Execute tool actions (Google Business Profile API, DataForSEO API, OpenAI GPT-4o)
-    # 4. Log outcome
-    # 5. Return structured result
-
-    raise NotImplementedError(
-        "Growth Manager not yet implemented — see agents/growth_manager/spec.md"
+    # 1. Generate AI response
+    context = event.get("payload", event)
+    ai_output = call_agent(
+        "growth_manager",
+        f"Handle this event: {json.dumps(context)}",
+        context=context,
     )
+
+    # 2. TODO: execute tool actions
+    #    e.g. Twilio SMS, GBP API post, CRM write
+    #    Uncomment and configure when integrations are ready:
+    #
+    #    from twilio.rest import Client
+    #    twilio = Client(os.environ["TWILIO_SID"], os.environ["TWILIO_AUTH"])
+    #    twilio.messages.create(body=ai_output, from_=FROM, to=event["phone"])
+
+    return {
+        "agent":       "growth_manager",
+        "timestamp":   datetime.now().isoformat(),
+        "event_type":  event.get("type", "unknown"),
+        "ai_output":   ai_output,
+        "tools_fired": [],   # populate when integrations are wired
+        "status":      "ai_complete_tools_pending",
+    }
 
 
 if __name__ == "__main__":
-    mock = {"type": "growth_manager", "timestamp": datetime.now().isoformat(), "client_id": "test-001", "payload": {}}
-    try:
-        print(json.dumps(handle(mock), indent=2))
-    except NotImplementedError as e:
-        print(f"Not implemented: {e}")
+    mock = {
+        "type": "growth_manager",
+        "timestamp": datetime.now().isoformat(),
+        "client_id": "test-001",
+        "payload": {"name": "Test Client", "phone": "(602) 555-0100"},
+    }
+    import json
+    print(json.dumps(handle(mock), indent=2))

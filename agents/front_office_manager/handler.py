@@ -1,7 +1,7 @@
 """
 WebStaff Agent: Front Office Manager
-Dept: Operations | Plans: growth, pro
-Trigger: Any inbound event — call, form, CRM update, job close
+Celery task — calls workflows.call_agent() then fires real tool actions.
+See agents/front_office_manager/spec.md for full spec.
 """
 import logging
 import json
@@ -9,35 +9,56 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """Front office manager. An event just came in. Classify it and return JSON: {event_type, agent, priority, reason}."""
+# Import the central agent caller
+try:
+    from agents.workflows import call_agent
+except ImportError:
+    # Running standalone
+    import sys, os
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    from agents.workflows import call_agent
 
 
 def handle(event: dict) -> dict:
     """
-    Handle a Front Office Manager event.
-
-    Args:
-        event: Trigger payload dict (see spec.md for schema)
-    Returns:
-        dict: success, output, actions_taken, timestamp
+    Handle a front_office_manager event.
+    Replace the TODOs below with real tool calls (Twilio, GBP API, etc.)
+    See agents/front_office_manager/spec.md for the full tool list and success metric.
     """
-    logger.info("Front Office Manager triggered", extra={"event": event.get("type")})
+    logger.info("front_office_manager triggered", extra={"event_type": event.get("type")})
 
-    # TODO: implement
-    # 1. Validate event payload
-    # 2. OpenAI call with SYSTEM_PROMPT + event context
-    # 3. Execute tool actions (Internal routing logic, Celery task dispatch, CRM read)
-    # 4. Log outcome
-    # 5. Return structured result
-
-    raise NotImplementedError(
-        "Front Office Manager not yet implemented — see agents/front_office_manager/spec.md"
+    # 1. Generate AI response
+    context = event.get("payload", event)
+    ai_output = call_agent(
+        "front_office_manager",
+        f"Handle this event: {json.dumps(context)}",
+        context=context,
     )
+
+    # 2. TODO: execute tool actions
+    #    e.g. Twilio SMS, GBP API post, CRM write
+    #    Uncomment and configure when integrations are ready:
+    #
+    #    from twilio.rest import Client
+    #    twilio = Client(os.environ["TWILIO_SID"], os.environ["TWILIO_AUTH"])
+    #    twilio.messages.create(body=ai_output, from_=FROM, to=event["phone"])
+
+    return {
+        "agent":       "front_office_manager",
+        "timestamp":   datetime.now().isoformat(),
+        "event_type":  event.get("type", "unknown"),
+        "ai_output":   ai_output,
+        "tools_fired": [],   # populate when integrations are wired
+        "status":      "ai_complete_tools_pending",
+    }
 
 
 if __name__ == "__main__":
-    mock = {"type": "front_office_manager", "timestamp": datetime.now().isoformat(), "client_id": "test-001", "payload": {}}
-    try:
-        print(json.dumps(handle(mock), indent=2))
-    except NotImplementedError as e:
-        print(f"Not implemented: {e}")
+    mock = {
+        "type": "front_office_manager",
+        "timestamp": datetime.now().isoformat(),
+        "client_id": "test-001",
+        "payload": {"name": "Test Client", "phone": "(602) 555-0100"},
+    }
+    import json
+    print(json.dumps(handle(mock), indent=2))
