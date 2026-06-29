@@ -1,0 +1,28 @@
+# netlify.toml — WebStaff MVP
+
+[build]
+  command   = "python3 builder/site_generator.py --intake $INTAKE_FILE"
+  publish   = "clients"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from   = "/clients/*"
+  to     = "/clients/:splat/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
