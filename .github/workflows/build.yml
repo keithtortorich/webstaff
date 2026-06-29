@@ -1,4 +1,4 @@
-name: Build & Validate
+name: WebStaffr CI
 
 on:
   push:
@@ -7,12 +7,13 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -21,12 +22,41 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Validate example intake
-        run: python3 builder/site_generator.py --intake tests/fixtures/phoenix_hvac_intake.json --validate
+        run: |
+          python builder/site_generator.py \
+            --intake tests/fixtures/example_intake.json \
+            --validate
 
       - name: Build example site
-        run: python3 builder/site_generator.py --intake tests/fixtures/phoenix_hvac_intake.json
-
-      - name: Confirm output
         run: |
-          ls clients/
-          echo "Build succeeded ✅"
+          python builder/site_generator.py \
+            --intake tests/fixtures/example_intake.json
+        env:
+          BASE_URL: "http://localhost:8000"
+
+      - name: Verify build output
+        run: |
+          CLIENT_DIR=$(ls -d clients/*/ | head -1)
+          echo "Built: $CLIENT_DIR"
+          test -f "${CLIENT_DIR}index.html"
+          test -f "${CLIENT_DIR}webstaffr-manifest.json"
+          echo "✅ Build output verified"
+
+      - name: Test FastAPI startup
+        run: |
+          python -c "
+          import os
+          os.environ['DATABASE_URL'] = 'sqlite:///./test_ci.db'
+          os.environ['OPENAI_API_KEY'] = 'sk-test'
+          os.environ['TWILIO_ACCOUNT_SID'] = 'ACtest'
+          os.environ['TWILIO_AUTH_TOKEN'] = 'test'
+          os.environ['TWILIO_PHONE_NUMBER'] = '+15005550006'
+          os.environ['SENDGRID_API_KEY'] = 'SG.test'
+          from backend.main import app
+          from backend.db.models import init_db
+          init_db()
+          print('✅ FastAPI app starts cleanly')
+          "
+
+      - name: Cleanup
+        run: rm -f test_ci.db

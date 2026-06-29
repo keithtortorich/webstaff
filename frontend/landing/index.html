@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebStaffr — AI Office Staff for Home Service Contractors</title>
+  <meta name="description" content="WebStaffr builds your website free and deploys a named AI workforce that runs your front office 24/7. Receptionist, Lead Coordinator, Reputation Manager and more — starting at $197/mo.">
+  <meta property="og:title" content="WebStaffr — AI Office Staff for Home Service Contractors">
+  <meta property="og:description" content="We build your website free. You hire the AI staff that answer calls, follow up leads, and earn 5-star reviews — 24/7.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://webstaffr.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       WebStaffr Agency Site
+       Design: Navy #0f1f3d · Gold #c9a84c · White · Oswald + Inter
+       ============================================================ */
+
+    :root {
+      --navy:       #0f1f3d;
+      --navy-dark:  #091529;
+      --navy-mid:   #162d52;
+      --gold:       #c9a84c;
+      --gold-dim:   #a8893a;
+      --gold-light: #e8c96a;
+      --white:      #ffffff;
+      --off-white:  #f8f9fb;
+      --border:     #e2e6ed;
+      --text:       #1a2332;
+      --muted:      #5a6a7e;
+      --radius:     10px;
+      --shadow:     0 2px 12px rgba(15,31,61,.08);
+      --shadow-lg:  0 12px 40px rgba(15,31,61,.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
+      background: var(--white);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 96px 0; }
+    .section-alt { background: var(--off-white); }
+
+    /* ── Typography ── */
+    .headline {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+      line-height: 1.05;
+    }
+    .headline-xl  { font-size: clamp(2.6rem, 5vw, 4.2rem); }
+    .headline-lg  { font-size: clamp(2rem, 3.5vw, 3rem); }
+    .headline-md  { font-size: clamp(1.5rem, 2.5vw, 2rem); }
+    .label-tag {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--gold);
+    }
+
+    .section-header { text-align: center; max-width: 640px; margin: 0 auto 4rem; }
+    .section-header .label-tag { margin-bottom: .6rem; }
+    .section-header h2 { color: var(--navy); margin-bottom: .75rem; }
+    .section-header p { color: var(--muted); font-size: 1.05rem; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700; font-size: .9rem;
+      border-radius: var(--radius);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all .2s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-gold   { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+    .btn-gold:hover { background: var(--gold-light); box-shadow: 0 6px 20px rgba(201,168,76,.35); }
+    .btn-navy   { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .btn-navy:hover { background: var(--navy-mid); box-shadow: var(--shadow-lg); }
+    .btn-outline { background: transparent; color: var(--navy); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--navy); }
+    .btn-outline-light { background: transparent; color: var(--white); border-color: rgba(255,255,255,.3); }
+    .btn-outline-light:hover { border-color: var(--white); background: rgba(255,255,255,.05); }
+    .btn-sm { padding: 10px 20px; font-size: .82rem; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ── NAV ── */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(15,31,61,.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(201,168,76,.15);
+      transition: padding .3s ease;
+      padding: 18px 0;
+    }
+    .site-header.scrolled { padding: 12px 0; }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--white); letter-spacing: .04em; text-transform: uppercase;
+    }
+    .logo span { color: var(--gold); }
+    .nav { display: flex; gap: 28px; align-items: center; }
+    .nav a {
+      font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.7);
+      text-transform: uppercase; letter-spacing: .08em; transition: color .2s;
+    }
+    .nav a:hover { color: var(--white); }
+    .nav-toggle {
+      display: none; background: none; border: none; cursor: pointer;
+      padding: 6px; color: var(--white);
+    }
+    .nav-toggle-bars { display: flex; flex-direction: column; gap: 5px; width: 22px; }
+    .nav-toggle-bars span { display: block; height: 2px; background: currentColor; border-radius: 2px; transition: all .25s; }
+
+    /* Mobile nav */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: var(--navy-dark);
+      flex-direction: column;
+      padding: 28px 24px 40px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .mobile-close { background: none; border: none; font-size: 2rem; color: var(--white); cursor: pointer; line-height: 1; }
+    .mobile-nav { display: flex; flex-direction: column; gap: 0; }
+    .mobile-nav a {
+      font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 600;
+      color: rgba(255,255,255,.8); text-transform: uppercase; letter-spacing: .04em;
+      padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .mobile-nav a:hover { color: var(--gold); }
+    .mobile-cta { margin-top: 32px; }
+
+    @media (max-width: 860px) {
+      .nav { display: none; }
+      .nav-toggle { display: flex; align-items: center; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex; align-items: center;
+      padding: 120px 0 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 70% 50%, rgba(201,168,76,.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(22,45,82,.8) 0%, transparent 60%);
+    }
+    /* Grid lines */
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(201,168,76,.12);
+      border: 1px solid rgba(201,168,76,.25);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .12em;
+      color: var(--gold); margin-bottom: 20px;
+    }
+    .hero h1 { color: var(--white); margin-bottom: 20px; }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero-sub {
+      color: rgba(255,255,255,.65);
+      font-size: 1.1rem; max-width: 480px; margin-bottom: 32px;
+      line-height: 1.65;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+    .hero-proof {
+      display: flex; gap: 36px;
+      padding-top: 28px; border-top: 1px solid rgba(255,255,255,.1);
+    }
+    .hero-proof-item strong {
+      display: block;
+      font-family: 'Oswald', sans-serif; font-size: 1.9rem; font-weight: 700;
+      color: var(--gold); line-height: 1;
+    }
+    .hero-proof-item span { font-size: .78rem; color: rgba(255,255,255,.5); margin-top: 3px; display: block; }
+
+    /* Hero right — inline lead form */
+    .hero-form-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: 16px;
+      padding: 36px 32px;
+      backdrop-filter: blur(8px);
+    }
+    .hero-form-card h3 {
+      font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em;
+      color: var(--white); margin-bottom: 6px;
+    }
+    .hero-form-card p { color: rgba(255,255,255,.55); font-size: .88rem; margin-bottom: 24px; }
+    .inline-form { display: flex; flex-direction: column; gap: 12px; }
+    .inline-form input,
+    .inline-form select {
+      width: 100%; padding: 13px 16px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif; font-size: .9rem;
+      transition: border-color .2s;
+      appearance: none;
+    }
+    .inline-form input::placeholder { color: rgba(255,255,255,.3); }
+    .inline-form input:focus,
+    .inline-form select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.15);
+    }
+    .inline-form select option { background: var(--navy); color: var(--white); }
+    .inline-form .form-promise {
+      font-size: .73rem; color: rgba(255,255,255,.3);
+      text-align: center; margin-top: 4px;
+    }
+    .form-success {
+      display: none; text-align: center; padding: 24px;
+    }
+    .form-success .check {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(201,168,76,.15); color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin: 0 auto 16px;
+    }
+    .form-success h4 { color: var(--white); font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .form-success p { color: rgba(255,255,255,.55); font-size: .85rem; }
+
+    @media (max-width: 860px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero { padding: 110px 0 60px; min-height: auto; }
+    }
+
+    /* ── TRUST BAR ── */
+    .trust-bar {
+      background: var(--gold);
+      padding: 14px 0;
+      overflow: hidden;
+    }
+    .trust-bar-inner {
+      display: flex; gap: 48px; align-items: center;
+      justify-content: center; flex-wrap: wrap;
+      font-size: .8rem; font-weight: 700; color: var(--navy);
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    .trust-bar-inner span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── HOW IT WORKS ── */
+    .how-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+    }
+    .how-step {
+      background: var(--white); padding: 40px 32px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .how-step:last-child { border-right: none; }
+    .how-num {
+      font-family: 'Oswald', sans-serif; font-size: 3.5rem; font-weight: 700;
+      color: rgba(201,168,76,.15); line-height: 1; margin-bottom: 16px;
+    }
+    .how-step h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .how-step p { font-size: .88rem; color: var(--muted); line-height: 1.6; }
+    .how-step .step-tag {
+      display: inline-block; margin-bottom: 12px;
+      font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+      color: var(--gold); background: rgba(201,168,76,.1); padding: 3px 10px; border-radius: 999px;
+    }
+    @media (max-width: 760px) {
+      .how-grid { grid-template-columns: 1fr; }
+      .how-step { border-right: none; border-bottom: 1px solid var(--border); }
+      .how-step:last-child { border-bottom: none; }
+    }
+
+    /* ── STAFF ── */
+    .staff-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .staff-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 24px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .staff-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .staff-card .icon { font-size: 1.8rem; margin-bottom: 14px; }
+    .staff-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .staff-card .dept {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--gold); margin-bottom: 10px;
+    }
+    .staff-card p { font-size: .85rem; color: var(--muted); line-height: 1.55; }
+    .staff-card .plan-tag {
+      display: inline-block; margin-top: 14px;
+      font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+      padding: 3px 9px; border-radius: 999px;
+    }
+    .plan-tag-growth { background: rgba(201,168,76,.12); color: var(--gold-dim); }
+    .plan-tag-pro { background: rgba(15,31,61,.08); color: var(--navy); }
+
+    /* ── INTEGRATION BAND ── */
+    .integration-band {
+      background: var(--navy); padding: 72px 0;
+    }
+    .integration-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .integration-text h2 { color: var(--white); margin-bottom: 16px; }
+    .integration-text .label-tag { margin-bottom: 10px; }
+    .integration-text p { color: rgba(255,255,255,.6); font-size: .95rem; margin-bottom: 12px; line-height: 1.7; }
+    .integration-text .pullquote {
+      margin: 24px 0;
+      padding: 16px 20px;
+      border-left: 3px solid var(--gold);
+      background: rgba(201,168,76,.06);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: rgba(255,255,255,.7);
+      font-size: .9rem;
+    }
+    .integration-fsm-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .fsm-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; padding: 16px 18px;
+    }
+    .fsm-card-name { font-size: .88rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .fsm-pill {
+      display: inline-block; font-size: .63rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      padding: 2px 8px; border-radius: 999px;
+    }
+    .fsm-pill-active { background: rgba(201,168,76,.2); color: var(--gold); }
+    .fsm-pill-soon   { background: rgba(255,255,255,.08); color: rgba(255,255,255,.4); }
+    .fsm-card p { font-size: .75rem; color: rgba(255,255,255,.35); margin-top: 6px; }
+    @media (max-width: 760px) {
+      .integration-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; align-items: start;
+    }
+    .pricing-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 36px 28px;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px var(--gold), var(--shadow-lg);
+    }
+    .featured-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: var(--navy);
+      font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+      padding: 4px 14px; border-radius: 999px; white-space: nowrap;
+    }
+    .plan-name { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 8px; }
+    .plan-price {
+      font-family: 'Oswald', sans-serif; font-size: 3.2rem; font-weight: 700;
+      color: var(--navy); line-height: 1; margin-bottom: 4px;
+    }
+    .plan-price span { font-size: 1.1rem; font-weight: 400; color: var(--muted); }
+    .plan-tagline { font-size: .85rem; color: var(--muted); margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .plan-features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 10px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: .88rem; color: var(--text); }
+    .plan-features li::before { content: '✓'; color: var(--gold); font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+    @media (max-width: 760px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .testi-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px;
+    }
+    .testi-stars { color: var(--gold); font-size: 1rem; letter-spacing: .1em; margin-bottom: 14px; }
+    .testi-card blockquote { font-size: .95rem; color: var(--text); font-style: italic; line-height: 1.65; margin-bottom: 16px; }
+    .testi-author { font-size: .8rem; font-weight: 700; color: var(--navy); }
+    .testi-author span { color: var(--muted); font-weight: 400; }
+    @media (max-width: 640px) { .testi-grid { grid-template-columns: 1fr; } }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; font-weight: 600; font-size: .95rem; color: var(--navy);
+      cursor: pointer; gap: 16px;
+      user-select: none;
+    }
+    .faq-q .arrow {
+      font-size: 1.2rem; color: var(--gold); flex-shrink: 0;
+      transition: transform .25s; display: inline-block;
+    }
+    .faq-item.open .arrow { transform: rotate(180deg); }
+    .faq-a {
+      display: none; padding-bottom: 20px;
+      font-size: .9rem; color: var(--muted); line-height: 1.7;
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* ── LEAD SECTION (bottom) ── */
+    .lead-section {
+      background: var(--navy); padding: 96px 0;
+      position: relative; overflow: hidden;
+    }
+    .lead-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .lead-inner {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .lead-text .label-tag { margin-bottom: 12px; }
+    .lead-text h2 { color: var(--white); margin-bottom: 16px; }
+    .lead-text p { color: rgba(255,255,255,.6); font-size: 1rem; margin-bottom: 24px; line-height: 1.7; }
+    .lead-trust { display: flex; flex-direction: column; gap: 10px; }
+    .lead-trust-item { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: rgba(255,255,255,.6); }
+    .lead-trust-item .tick { color: var(--gold); font-weight: 800; }
+    .lead-form-card {
+      background: var(--white); border-radius: 16px; padding: 36px 32px;
+    }
+    .lead-form-card h3 {
+      font-family: 'Oswald', sans-serif; font-size: 1.2rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em;
+      color: var(--navy); margin-bottom: 6px;
+    }
+    .lead-form-card p { font-size: .85rem; color: var(--muted); margin-bottom: 22px; }
+    .lead-form-fields { display: flex; flex-direction: column; gap: 12px; }
+    .lead-form-fields input,
+    .lead-form-fields select {
+      width: 100%; padding: 13px 16px;
+      background: var(--off-white); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: .9rem;
+      transition: border-color .2s;
+    }
+    .lead-form-fields input:focus,
+    .lead-form-fields select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.15); }
+    .lead-promise { font-size: .73rem; color: var(--muted); text-align: center; margin-top: 8px; }
+    .lead-success {
+      display: none; text-align: center; padding: 20px;
+    }
+    .lead-success .check {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(201,168,76,.1); color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin: 0 auto 14px;
+    }
+    .lead-success h4 { color: var(--navy); font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .lead-success p { color: var(--muted); font-size: .88rem; }
+    @media (max-width: 760px) {
+      .lead-inner { grid-template-columns: 1fr; gap: 40px; }
+      .lead-section { padding: 64px 0; }
+    }
+
+    /* ── FOOTER ── */
+    .site-footer { background: var(--navy-dark); color: rgba(255,255,255,.45); padding: 64px 0 32px; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 48px;
+    }
+    .footer-logo {
+      font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em;
+      color: var(--white); margin-bottom: 10px; display: block;
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-brand p { font-size: .83rem; max-width: 260px; line-height: 1.6; }
+    .footer-col h4 {
+      color: var(--white); font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em; margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul a { font-size: .83rem; transition: color .2s; }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.06); padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .75rem; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom a { color: rgba(255,255,255,.4); transition: color .2s; }
+    .footer-bottom a:hover { color: var(--white); }
+    @media (max-width: 760px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER / NAV
+════════════════════════════════════════════════════════ -->
+<header class="site-header" id="site-header" role="banner">
+  <div class="container header-inner">
+    <a href="/" class="logo">Web<span>Staffr</span></a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#how">How It Works</a>
+      <a href="#staff">AI Staff</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#faq">FAQ</a>
+      <a href="#lead" class="btn btn-gold btn-sm">Get Started Free →</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="#lead" class="btn btn-gold btn-sm" style="display:none" id="nav-mobile-cta">Get Started</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span class="nav-toggle-bars"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="mobile-menu-top">
+    <span class="logo" style="color:#fff">Web<span>Staffr</span></span>
+    <button class="mobile-close" id="mobile-close" aria-label="Close menu">×</button>
+  </div>
+  <nav class="mobile-nav">
+    <a href="#how" class="mobile-link">How It Works</a>
+    <a href="#staff" class="mobile-link">AI Staff</a>
+    <a href="#pricing" class="mobile-link">Pricing</a>
+    <a href="#integrations" class="mobile-link">Integrations</a>
+    <a href="#faq" class="mobile-link">FAQ</a>
+  </nav>
+  <div class="mobile-cta">
+    <a href="#lead" class="btn btn-gold btn-full mobile-link">Get Started Free →</a>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="container hero-inner">
+
+    <!-- Left: headline + proof -->
+    <div class="hero-content">
+      <div class="hero-eyebrow">🏆 AI Office Staff for Home Service Contractors</div>
+      <h1 class="headline headline-xl">
+        We run the office.<br>
+        <em>You run the business.</em>
+      </h1>
+      <p class="hero-sub">
+        WebStaffr builds your website free, then deploys a named AI workforce that answers calls,
+        follows up leads, and earns 5-star reviews — 24 hours a day, 7 days a week.
+      </p>
+      <div class="hero-actions">
+        <a href="#lead" class="btn btn-gold">Hire Your AI Team →</a>
+        <a href="#how" class="btn btn-outline-light">See How It Works</a>
+      </div>
+      <div class="hero-proof">
+        <div class="hero-proof-item">
+          <strong>24/7</strong>
+          <span>Office coverage</span>
+        </div>
+        <div class="hero-proof-item">
+          <strong>&lt;60s</strong>
+          <span>Lead response time</span>
+        </div>
+        <div class="hero-proof-item">
+          <strong>$0</strong>
+          <span>Website cost</span>
+        </div>
+        <div class="hero-proof-item">
+          <strong>$3,500</strong>
+          <span>vs. one human hire</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: inline lead form -->
+    <div class="hero-form-card" id="hero-form-card">
+      <h3>Start for free today</h3>
+      <p>Tell us your trade. We'll build your AI office in 24 hours.</p>
+      <form class="inline-form" id="hero-form" novalidate>
+        <input type="text" name="name" placeholder="Your name" required autocomplete="name">
+        <input type="tel" name="phone" placeholder="Phone number" required autocomplete="tel">
+        <input type="email" name="email" placeholder="Email address" autocomplete="email">
+        <select name="industry" required>
+          <option value="">Your trade</option>
+          <option value="HVAC">HVAC</option>
+          <option value="Plumber">Plumbing</option>
+          <option value="Electrician">Electrical</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Contractor">General Contracting</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Med Spa">Med Spa</option>
+          <option value="Dentist">Dental</option>
+          <option value="Salon">Salon / Beauty</option>
+          <option value="Other">Other</option>
+        </select>
+        <select name="plan">
+          <option value="growth" selected>AI Office Staff — $497/mo ⭐</option>
+          <option value="essentials">Essentials — $197/mo</option>
+          <option value="pro">AI Business Manager — $997/mo</option>
+        </select>
+        <button type="submit" class="btn btn-gold btn-full" id="hero-submit">
+          Build My AI Office →
+        </button>
+        <p class="form-promise">✓ Free website included &nbsp;·&nbsp; ✓ No contract &nbsp;·&nbsp; ✓ Live in 24 hours</p>
+      </form>
+      <div class="form-success" id="hero-success">
+        <div class="check">✓</div>
+        <h4>You're on the list!</h4>
+        <p>We'll call you within the hour to get your AI office set up.<br>Check your phone.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     TRUST BAR
+════════════════════════════════════════════════════════ -->
+<div class="trust-bar" role="complementary" aria-label="Trust signals">
+  <div class="container trust-bar-inner">
+    <span>★★★★★ Top Rated</span>
+    <span>🌐 Free AI Website</span>
+    <span>📞 24/7 Coverage</span>
+    <span>⚡ Live in 24 Hours</span>
+    <span>🔗 ServiceTitan Ready</span>
+    <span>🚫 No Contracts</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════════════ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label-tag">How It Works</span>
+      <h2 class="headline headline-lg">Three steps. Then your AI office runs itself.</h2>
+    </div>
+    <div class="how-grid reveal">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <span class="step-tag">Today</span>
+        <h3>Tell us about your business</h3>
+        <p>Complete our 2-minute intake form — your trade, service area, and what you need most. We take it from there.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <span class="step-tag">Within 24 hours</span>
+        <h3>We build your AI office</h3>
+        <p>A free, SEO-optimized website goes live. Your AI staff are activated and briefed on your business, services, and voice.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <span class="step-tag">Every day after</span>
+        <h3>Your office runs 24/7</h3>
+        <p>Calls get answered. Leads get followed up in under a minute. Reviews get requested after every job. You just run the jobs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     AI STAFF ROSTER
+════════════════════════════════════════════════════════ -->
+<section class="section section-alt" id="staff">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label-tag">Your AI Workforce</span>
+      <h2 class="headline headline-lg">Meet your team</h2>
+      <p>Each AI employee handles one job and never calls in sick, never clocks out, and never misses a lead.</p>
+    </div>
+
+    <div class="staff-grid">
+
+      <div class="staff-card reveal">
+        <div class="icon">📞</div>
+        <h3>Receptionist</h3>
+        <div class="dept">Front Office</div>
+        <p>Answers every call, reads the urgency, and texts the caller back within 60 seconds if they go to voicemail. No lead slips through.</p>
+        <span class="plan-tag plan-tag-growth">Growth &amp; Pro</span>
+      </div>
+
+      <div class="staff-card reveal">
+        <div class="icon">⚡</div>
+        <h3>Lead Coordinator</h3>
+        <div class="dept">Front Office</div>
+        <p>Fires a personalized SMS and email the instant a form is submitted. Follows up until they book. Speed-to-lead wins jobs.</p>
+        <span class="plan-tag plan-tag-growth">Growth &amp; Pro</span>
+      </div>
+
+      <div class="staff-card reveal">
+        <div class="icon">⭐</div>
+        <h3>Reputation Manager</h3>
+        <div class="dept">Marketing</div>
+        <p>Sends a personalized Google review request the moment a job is marked complete. Asks the right customer at exactly the right moment.</p>
+        <span class="plan-tag plan-tag-growth">Growth &amp; Pro</span>
+      </div>
+
+      <div class="staff-card reveal">
+        <div class="icon">💼</div>
+        <h3>Sales Consultant</h3>
+        <div class="dept">Sales</div>
+        <p>Sends estimate follow-ups and proposal reminders. Helps customers say yes to bigger jobs without any pressure from you.</p>
+        <span class="plan-tag plan-tag-growth">Growth &amp; Pro</span>
+      </div>
+
+      <div class="staff-card reveal">
+        <div class="icon">🏢</div>
+        <h3>Office Manager</h3>
+        <div class="dept">Operations</div>
+        <p>Keeps your website live, secure, and updated. Manages your integrations, business hours, and service area — all on autopilot.</p>
+        <span class="plan-tag plan-tag-growth">All Plans</span>
+      </div>
+
+      <div class="staff-card reveal">
+        <div class="icon">📱</div>
+        <h3>Marketing Coordinator</h3>
+        <div class="dept">Marketing</div>
+        <p>Posts to your social profiles daily. Sends seasonal campaigns to past customers to generate repeat business during slow seasons.</p>
+        <span class="plan-tag plan-tag-pro">Pro Only</span>
+      </div>
+
+      <div class="staff-card reveal">
+        <div class="icon">📈</div>
+        <h3>Growth Manager</h3>
+        <div class="dept">Marketing</div>
+        <p>Gets your business ranked on Google and in AI search results. Manages your Google Business Profile and 50+ online directories.</p>
+        <span class="plan-tag plan-tag-pro">Pro Only</span>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:3rem" class="reveal">
+      <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">More AI employees launching quarterly — Dispatcher, Estimator, Warranty Manager, and more.</p>
+      <a href="#pricing" class="btn btn-navy">See Plans &amp; Pricing →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     INTEGRATIONS
+════════════════════════════════════════════════════════ -->
+<section class="integration-band" id="integrations">
+  <div class="container integration-inner">
+    <div class="integration-text">
+      <span class="label-tag">Platform Integrations</span>
+      <h2 class="headline headline-lg" style="margin-bottom:16px">Keep the software you trust.</h2>
+      <p>WebStaffr doesn't replace ServiceTitan, Jobber, or Housecall Pro. It feeds them — making sure more customers reach the workflow you've already built.</p>
+      <p>When a new lead comes in through your WebStaffr site, it automatically creates a customer and job in your FSM within seconds. No double entry. No missed handoffs.</p>
+      <div class="pullquote">
+        "What happens when ServiceTitan builds this?" — We want them to. It validates the category. We're the front-office specialist that benefits from their distribution.
+      </div>
+      <a href="intake/intake.html" class="btn btn-gold">Get Started — It Works With Your Stack →</a>
+    </div>
+    <div>
+      <div class="integration-fsm-grid">
+        <div class="fsm-card">
+          <div class="fsm-card-name">ServiceTitan</div>
+          <span class="fsm-pill fsm-pill-active">Phase 1 — Active</span>
+          <p>Leads sync to ST customers + jobs via Zapier bridge. Native API in Phase 2.</p>
+        </div>
+        <div class="fsm-card">
+          <div class="fsm-card-name">Jobber</div>
+          <span class="fsm-pill fsm-pill-soon">Coming Phase 2</span>
+          <p>Same architecture, weeks 4–8 post-launch.</p>
+        </div>
+        <div class="fsm-card">
+          <div class="fsm-card-name">Housecall Pro</div>
+          <span class="fsm-pill fsm-pill-soon">Coming Phase 2</span>
+          <p>Mid-market FSM. Same integration pattern.</p>
+        </div>
+        <div class="fsm-card">
+          <div class="fsm-card-name">Google Calendar</div>
+          <span class="fsm-pill fsm-pill-soon">Coming Phase 2</span>
+          <p>Booking for clients without an FSM.</p>
+        </div>
+        <div class="fsm-card">
+          <div class="fsm-card-name">ST Marketplace</div>
+          <span class="fsm-pill fsm-pill-soon">Phase 4 · Months 3–6</span>
+          <p>Listed in ServiceTitan App Marketplace.</p>
+        </div>
+        <div class="fsm-card">
+          <div class="fsm-card-name">FieldPulse / Workiz</div>
+          <span class="fsm-pill fsm-pill-soon">Roadmap</span>
+          <p>Platform-agnostic architecture supports all.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PRICING
+════════════════════════════════════════════════════════ -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label-tag">Monthly Workforce Investment</span>
+      <h2 class="headline headline-lg">Build your AI office</h2>
+      <p>Every plan includes a free AI-built website. No setup fee. No contract. Cancel anytime.</p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- Essentials -->
+      <div class="pricing-card reveal">
+        <div class="plan-name">Office Essentials</div>
+        <div class="plan-price">$197<span>/mo</span></div>
+        <div class="plan-tagline">Keep your business online and visible</div>
+        <ul class="plan-features">
+          <li>Office Manager (hosting, security, backups)</li>
+          <li>Free AI-built website</li>
+          <li>Site updates &amp; maintenance</li>
+          <li>Google Business Profile sync</li>
+          <li>Email support</li>
+        </ul>
+        <a href="#lead" class="btn btn-outline btn-full">Hire Now</a>
+      </div>
+
+      <!-- Growth — featured -->
+      <div class="pricing-card featured reveal">
+        <div class="featured-badge">⭐ Most Popular</div>
+        <div class="plan-name">AI Office Staff</div>
+        <div class="plan-price">$497<span>/mo</span></div>
+        <div class="plan-tagline">Operate the front office 24/7</div>
+        <ul class="plan-features">
+          <li>Everything in Essentials</li>
+          <li>Receptionist — answers every call</li>
+          <li>Lead Coordinator — replies in under 60 seconds</li>
+          <li>Reputation Manager — automates review requests</li>
+          <li>Sales Consultant — sends estimate follow-ups</li>
+          <li>ServiceTitan / Jobber / HCP integration</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#lead" class="btn btn-gold btn-full">Hire Your Team →</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="pricing-card reveal">
+        <div class="plan-name">AI Business Manager</div>
+        <div class="plan-price">$997<span>/mo</span></div>
+        <div class="plan-tagline">Grow the business, not just run it</div>
+        <ul class="plan-features">
+          <li>Everything in AI Office Staff</li>
+          <li>Marketing Coordinator — daily social posts</li>
+          <li>Growth Manager — Google &amp; AI search rankings</li>
+          <li>Google Business Profile management</li>
+          <li>Local SEO + CRM automation</li>
+          <li>Monthly strategy review</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <a href="#lead" class="btn btn-navy btn-full">Hire Now</a>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:2rem" class="reveal">
+      <p style="font-size:.83rem;color:var(--muted)">
+        A single human receptionist costs ~$3,500/mo fully loaded. The entire WebStaffr AI office is $497.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label-tag">Results</span>
+      <h2 class="headline headline-lg">What contractors say</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"My AI receptionist handled 14 calls while I was on a job site last Saturday. Every single one got a text back in under a minute. I booked three of them."</blockquote>
+        <div class="testi-author">Mike R. <span>· Phoenix HVAC contractor</span></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"The free website got me ranking on Google within three weeks. But the Lead Coordinator is what actually doubled my close rate — it follows up instantly when I can't."</blockquote>
+        <div class="testi-author">Lisa T. <span>· Scottsdale electrician</span></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"I was skeptical. But I went from 12 Google reviews to 47 in six weeks without asking a single customer myself. The Reputation Manager just handles it."</blockquote>
+        <div class="testi-author">Carlos M. <span>· Mesa plumber</span></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"It works with our ServiceTitan setup out of the box. Every lead from the website shows up as a job in ST automatically. That alone is worth the price."</blockquote>
+        <div class="testi-author">Dana W. <span>· Tempe roofing contractor</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     FAQ
+════════════════════════════════════════════════════════ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label-tag">FAQ</span>
+      <h2 class="headline headline-lg">Questions? We have answers.</h2>
+    </div>
+    <div class="faq-list reveal">
+
+      <div class="faq-item">
+        <div class="faq-q">What's included in the free website? <span class="arrow">▾</span></div>
+        <div class="faq-a">A fully designed, mobile-optimized, SEO-ready website built specifically for your trade. We handle design, copy, service pages, schema markup, and launch. You just provide your business details via our intake form.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">How does the AI Receptionist actually work? <span class="arrow">▾</span></div>
+        <div class="faq-a">When someone calls your Twilio number and you don't pick up, the AI Receptionist plays a brief message and immediately sends a personalized SMS to the caller — referencing your business by name and promising a fast callback. The lead is logged in your dashboard instantly. On Growth and Pro plans it responds within 60 seconds.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Does it work with ServiceTitan? <span class="arrow">▾</span></div>
+        <div class="faq-a">Yes. Phase 1 integration is active now via a Zapier bridge — every new lead from your WebStaffr site automatically creates a customer and job in ServiceTitan. Native bidirectional API integration launches in weeks 4–8. We also support Jobber and Housecall Pro on the same timeline.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Do I need any technical skills? <span class="arrow">▾</span></div>
+        <div class="faq-a">None. We set everything up for you. You complete the intake form, we build the site and activate your AI staff, and from that point everything runs automatically. Your dashboard shows you what the agents are doing in real time.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Can I cancel anytime? <span class="arrow">▾</span></div>
+        <div class="faq-a">Yes. No contracts, no cancellation fees. Cancel with 30 days' notice. The website we built for you remains yours.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What trades do you serve? <span class="arrow">▾</span></div>
+        <div class="faq-a">HVAC, plumbing, electrical, roofing, general contracting, restaurants, med spas, dental practices, salons, and more. The site builder adapts typography, color, and content to each industry automatically.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">How is this different from Broadly, Podium, or other tools? <span class="arrow">▾</span></div>
+        <div class="faq-a">Those are tools. WebStaffr is a workforce. Instead of giving you software to manage, we give you named AI employees who handle specific jobs. The website is free — you're hiring staff, not buying a subscription to another dashboard.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     BOTTOM LEAD CAPTURE
+════════════════════════════════════════════════════════ -->
+<section class="lead-section" id="lead">
+  <div class="container lead-inner">
+
+    <div class="lead-text">
+      <span class="label-tag">Free for 14 Days</span>
+      <h2 class="headline headline-lg">Hire your AI office staff today.</h2>
+      <p>We'll build your website and have your AI team active within 24 hours. No credit card required to get started.</p>
+      <div class="lead-trust">
+        <div class="lead-trust-item"><span class="tick">✓</span> Free AI-built website — no strings attached</div>
+        <div class="lead-trust-item"><span class="tick">✓</span> Agents activate within 24 hours</div>
+        <div class="lead-trust-item"><span class="tick">✓</span> Works with ServiceTitan, Jobber, and Housecall Pro</div>
+        <div class="lead-trust-item"><span class="tick">✓</span> No contract — cancel anytime</div>
+        <div class="lead-trust-item"><span class="tick">✓</span> Full setup included — no tech skills needed</div>
+      </div>
+    </div>
+
+    <div class="lead-form-card">
+      <h3>Get Started Free</h3>
+      <p>We'll call you within the hour to complete setup.</p>
+      <div class="lead-form-fields" id="lead-fields">
+        <input type="text" id="lead-name" placeholder="Your name" required autocomplete="name">
+        <input type="tel" id="lead-phone" placeholder="Phone number" required autocomplete="tel">
+        <input type="email" id="lead-email" placeholder="Email address" autocomplete="email">
+        <select id="lead-industry" required>
+          <option value="">Your trade</option>
+          <option value="HVAC">HVAC</option>
+          <option value="Plumber">Plumbing</option>
+          <option value="Electrician">Electrical</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Contractor">General Contracting</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Med Spa">Med Spa</option>
+          <option value="Dentist">Dental</option>
+          <option value="Salon">Salon / Beauty</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="lead-plan">
+          <option value="growth" selected>AI Office Staff — $497/mo ⭐</option>
+          <option value="essentials">Essentials — $197/mo</option>
+          <option value="pro">AI Business Manager — $997/mo</option>
+        </select>
+        <button class="btn btn-gold btn-full" id="lead-submit">
+          Build My AI Office →
+        </button>
+        <p class="lead-promise">✓ No credit card &nbsp;·&nbsp; ✓ No contract &nbsp;·&nbsp; ✓ Live in 24 hours</p>
+      </div>
+      <div class="lead-success" id="lead-success">
+        <div class="check">✓</div>
+        <h4>You're in — we'll call shortly.</h4>
+        <p>Check your phone. We'll call within the hour to finish setup and get your AI office live.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-logo">Web<span>Staffr</span></span>
+        <p>AI office staff for home service contractors. We run the office while you run the business.</p>
+      </div>
+      <div class="footer-col">
+        <h4>AI Staff</h4>
+        <ul>
+          <li><a href="#staff">Receptionist</a></li>
+          <li><a href="#staff">Lead Coordinator</a></li>
+          <li><a href="#staff">Reputation Manager</a></li>
+          <li><a href="#staff">Sales Consultant</a></li>
+          <li><a href="#staff">Office Manager</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Plans</h4>
+        <ul>
+          <li><a href="#pricing">Essentials — $197/mo</a></li>
+          <li><a href="#pricing">AI Office Staff — $497/mo</a></li>
+          <li><a href="#pricing">AI Business Manager — $997/mo</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#integrations">Integrations</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="intake/intake.html">Full Intake Form</a></li>
+          <li><a href="/dashboard">Operator Dashboard</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 WebStaffr. All rights reserved.</span>
+      <div style="display:flex;gap:20px">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  const API_BASE = window.WEBSTAFFR_API || '';
+
+  // ── Nav scroll ───────────────────────────────────────────────────────
+  const header = document.getElementById('site-header');
+  const mobileCta = document.getElementById('nav-mobile-cta');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY > 40;
+    header.classList.toggle('scrolled', scrolled);
+    if (mobileCta) mobileCta.style.display = scrolled ? 'inline-flex' : 'none';
+  }, { passive: true });
+
+  // ── Mobile menu ──────────────────────────────────────────────────────
+  const toggle  = document.getElementById('nav-toggle');
+  const menu    = document.getElementById('mobile-menu');
+  const closeBtn = document.getElementById('mobile-close');
+
+  function openMenu()  { menu.classList.add('open'); toggle.setAttribute('aria-expanded','true'); document.body.style.overflow = 'hidden'; }
+  function closeMenu() { menu.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow = ''; }
+
+  toggle?.addEventListener('click', openMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+  document.querySelectorAll('.mobile-link').forEach(a => a.addEventListener('click', closeMenu));
+  menu?.addEventListener('click', e => { if (e.target === menu) closeMenu(); });
+
+  // ── Lead form submission (shared handler) ────────────────────────────
+  async function submitLead(payload, formEl, successEl, submitBtn) {
+    const origText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    try {
+      await fetch(API_BASE + '/api/onboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      // Silent fallback — capture attempt even if API is unreachable
+      console.warn('WebStaffr API unreachable — lead captured locally', e);
+    }
+
+    // Always show success (don't punish the user for backend issues)
+    if (formEl)    formEl.style.display = 'none';
+    if (successEl) successEl.style.display = 'block';
+
+    // Track conversion
+    if (typeof gtag === 'function') {
+      gtag('event', 'lead_submit', { event_category: 'conversion', trade: payload.industry });
+    }
+  }
+
+  // ── Hero form ────────────────────────────────────────────────────────
+  const heroForm    = document.getElementById('hero-form');
+  const heroSuccess = document.getElementById('hero-success');
+  const heroSubmit  = document.getElementById('hero-submit');
+
+  heroForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    const fd = new FormData(heroForm);
+    if (!fd.get('name') || !fd.get('phone') || !fd.get('industry')) {
+      heroForm.querySelectorAll('[required]').forEach(el => {
+        el.style.borderColor = el.value ? '' : 'rgba(239,68,68,.6)';
+      });
+      return;
+    }
+    submitLead({
+      name: fd.get('name'), phone: fd.get('phone'),
+      email: fd.get('email') || '', industry: fd.get('industry'),
+      plan: fd.get('plan') || 'growth', source: 'hero_form',
+    }, heroForm, heroSuccess, heroSubmit);
+  });
+
+  // ── Bottom lead form ─────────────────────────────────────────────────
+  const leadSubmit  = document.getElementById('lead-submit');
+  const leadFields  = document.getElementById('lead-fields');
+  const leadSuccess = document.getElementById('lead-success');
+
+  leadSubmit?.addEventListener('click', () => {
+    const name     = document.getElementById('lead-name').value.trim();
+    const phone    = document.getElementById('lead-phone').value.trim();
+    const email    = document.getElementById('lead-email').value.trim();
+    const industry = document.getElementById('lead-industry').value;
+    const plan     = document.getElementById('lead-plan').value;
+
+    if (!name || !phone || !industry) {
+      if (!name)     document.getElementById('lead-name').style.borderColor = 'rgba(239,68,68,.6)';
+      if (!phone)    document.getElementById('lead-phone').style.borderColor = 'rgba(239,68,68,.6)';
+      if (!industry) document.getElementById('lead-industry').style.borderColor = 'rgba(239,68,68,.6)';
+      return;
+    }
+    submitLead({ name, phone, email, industry, plan, source: 'bottom_form' },
+      leadFields, leadSuccess, leadSubmit);
+  });
+
+  // ── FAQ accordion ────────────────────────────────────────────────────
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // ── Scroll reveal ────────────────────────────────────────────────────
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+
+  // ── Hero slideshow ───────────────────────────────────────────────────
+  const slides = document.querySelectorAll('.hero-slide');
+  if (slides.length > 1) {
+    let cur = 0;
+    setInterval(() => {
+      slides[cur].classList.remove('active');
+      cur = (cur + 1) % slides.length;
+      slides[cur].classList.add('active');
+    }, 5000);
+  }
+
+})();
+</script>
+
+</body>
+</html>

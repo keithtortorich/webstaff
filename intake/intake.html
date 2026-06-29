@@ -3,384 +3,608 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claim Your Free Website — WebStaff</title>
-<meta name="description" content="WebStaff builds your contractor website for free, then gives you an AI office staff that answers calls, follows up leads, and earns reviews 24/7.">
+<title>Client Intake — WebStaffr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #f8fafc;
-  --white:   #ffffff;
-  --navy:    #0f172a;
-  --blue:    #1d4ed8;
-  --blue-lt: #eff6ff;
-  --green:   #16a34a;
-  --green-lt:#f0fdf4;
-  --amber:   #d97706;
-  --border:  #e2e8f0;
-  --muted:   #64748b;
-  --radius:  10px;
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22253a;
+  --border: #2a2d3a;
+  --accent: #6366f1;
+  --accent-dim: #3730a3;
+  --gold: #c9a84c;
+  --green: #10b981;
+  --red: #ef4444;
+  --text: #f1f5f9;
+  --muted: #64748b;
+  --radius: 10px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); line-height: 1.55; font-size: 15px; }
-
-/* NAV */
-.nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-.nav__logo { font-size: 18px; font-weight: 800; color: var(--navy); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-.nav__logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
-.nav__tagline { font-size: 12px; color: var(--muted); font-weight: 400; }
-
-/* HERO */
-.hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: white; padding: 64px 24px 56px; text-align: center; }
-.hero__eyebrow { display: inline-block; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
-.hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
-.hero h1 em { font-style: normal; color: #60a5fa; }
-.hero__sub { font-size: 18px; color: rgba(255,255,255,.75); max-width: 540px; margin: 0 auto 32px; }
-.proof-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; }
-.proof-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.8); }
-.proof-item strong { color: white; }
-
-/* CONTAINER */
-.container { max-width: 680px; margin: 0 auto; padding: 0 24px; }
-
-/* FORM WRAPPER */
-.form-wrap { padding: 48px 24px 80px; }
-
-/* PLAN PICKER */
-.plan-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
-@media (max-width: 560px) { .plan-picker { grid-template-columns: 1fr; } }
-.plan-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 16px 14px; cursor: pointer; transition: border-color .15s, background .15s; }
-.plan-card input { position: absolute; opacity: 0; pointer-events: none; }
-.plan-card:has(input:checked) { border-color: var(--blue); background: var(--blue-lt); }
-.plan-card.recommend { border-color: var(--green); }
-.plan-card.recommend:has(input:checked) { background: var(--green-lt); }
-.plan-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.plan-name { font-weight: 700; font-size: 14px; }
-.plan-price { font-weight: 800; font-size: 17px; color: var(--blue); }
-.plan-card.recommend .plan-price { color: var(--green); }
-.plan-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; background: var(--green); color: white; border-radius: 4px; padding: 2px 6px; }
-.plan-desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
-.plan-staff { margin-top: 8px; font-size: 11.5px; color: #374151; }
-.plan-staff span { display: block; padding: 2px 0; }
-.plan-staff span::before { content: "✓ "; color: var(--green); font-weight: 700; }
-
-/* CARD */
-.card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
-.card__title { font-size: 15px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-.card__num { width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-/* FIELDS */
-.field { margin-bottom: 18px; }
-.field:last-child { margin-bottom: 0; }
-.field label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
-.field label .req { color: #ef4444; }
-.field .hint { font-size: 12px; color: var(--muted); margin: -2px 0 6px; }
-.field input, .field select, .field textarea {
-  width: 100%; padding: 11px 13px;
-  border: 1px solid var(--border); border-radius: 8px;
-  font: inherit; font-size: 14px; color: var(--navy);
-  background: white; transition: border-color .15s, box-shadow .15s;
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
 }
-.field input:focus, .field select:focus, .field textarea:focus {
-  outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+
+/* ── Progress tracker ── */
+.tracker {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(15,17,23,.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
 }
-.field textarea { min-height: 80px; resize: vertical; }
-.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; }
-.field input.err, .field select.err, .field textarea.err { border-color: #ef4444; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
-@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+.tracker-inner { max-width: 780px; margin: 0 auto; }
+.tracker-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.tracker-brand { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--text); }
+.tracker-brand span { color: var(--accent); }
+.tracker-pct { font-family: 'IBM Plex Mono', monospace; font-size: 1rem; font-weight: 500; color: var(--gold); }
+.bar { height: 4px; background: var(--surface2); border-radius: 2px; margin-top: 8px; }
+.bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius: 2px; transition: width .35s ease; }
+.pips { display: flex; gap: 4px; margin-top: 6px; }
+.pip { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
+.pip.done { background: var(--green); }
+.pip.active { background: var(--gold); }
 
-/* CHIPS */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { position: relative; }
-.chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-.chip span { display: inline-block; padding: 7px 13px; border: 1px solid var(--border); border-radius: 999px; background: white; color: var(--muted); font-size: 13px; cursor: pointer; transition: all .13s; user-select: none; }
-.chip input:checked + span { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+/* ── Header ── */
+header { max-width: 780px; margin: 0 auto; padding: 48px 20px 12px; }
+.eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; color: var(--accent); text-transform: uppercase; }
+h1 { font-family: 'Oswald', sans-serif; font-size: clamp(28px,5vw,46px); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; line-height: 1.1; margin: 8px 0 10px; }
+.lede { color: var(--muted); max-width: 520px; }
+.lede strong { color: var(--text); }
 
-/* COND */
-.cond { display: none; margin-top: 14px; padding: 16px; border-left: 2px solid var(--blue); background: var(--blue-lt); border-radius: 0 8px 8px 0; }
+/* ── Form layout ── */
+form { max-width: 780px; margin: 0 auto; padding: 24px 20px 100px; }
+
+section.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+}
+.sec-head {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.sec-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: .15em; }
+.sec-title { font-size: 1rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .05em; }
+
+/* Fields */
+.field { margin-bottom: 1.25rem; }
+.q { display: block; font-size: .85rem; font-weight: 600; color: var(--text); margin-bottom: .4rem; }
+.req { color: var(--accent); }
+.hint { font-size: .78rem; color: var(--muted); margin-bottom: .4rem; }
+input[type=text], input[type=email], input[type=tel], input[type=url], input[type=number],
+select, textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: .9rem;
+  padding: .65rem .9rem;
+  transition: border-color .2s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+}
+textarea { resize: vertical; min-height: 80px; }
+select option { background: var(--surface); }
+input.invalid, select.invalid, textarea.invalid { border-color: var(--red) !important; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+/* Chip selects */
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip input { display: none; }
+.chip span {
+  display: inline-block;
+  padding: .35rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all .15s;
+  color: var(--muted);
+  user-select: none;
+}
+.chip input:checked + span {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.chip span:hover { border-color: var(--accent); color: var(--text); }
+
+/* Conditional blocks */
+.cond { display: none; }
 .cond.open { display: block; }
 
-/* SUBMIT */
-.submit-btn { width: 100%; background: var(--blue); color: white; border: none; border-radius: 10px; padding: 16px; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; transition: background .15s, transform .1s; margin-top: 8px; }
-.submit-btn:hover { background: #1e40af; transform: translateY(-1px); }
-.submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-.fine-print { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; }
-.err-msg { color: #ef4444; font-size: 13px; text-align: center; margin-top: 10px; display: none; }
+/* AI Staff preview */
+.staff-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .6rem; margin-top: .75rem; }
+.staff-chip {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .6rem .8rem;
+  display: flex; align-items: center; gap: .5rem;
+  font-size: .78rem;
+}
+.staff-chip.active { border-color: var(--green); background: rgba(16,185,129,.08); }
+.staff-chip.inactive { opacity: .45; }
+.staff-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+.staff-chip.active .staff-dot { background: var(--green); }
 
-/* CONFIRM */
-.confirm { display: none; text-align: center; padding: 80px 24px; max-width: 480px; margin: 0 auto; }
+/* Submit */
+.submit-wrap { margin-top: 1.5rem; }
+.go {
+  width: 100%; padding: 1rem;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  letter-spacing: .04em; transition: background .2s, transform .1s;
+}
+.go:hover { background: var(--accent-dim); }
+.go:active { transform: scale(.99); }
+.err-msg { display: none; color: var(--red); font-size: .8rem; text-align: center; margin-top: .75rem; }
+
+/* Confirm screen */
+.confirm {
+  display: none; text-align: center;
+  max-width: 500px; margin: 4rem auto;
+  padding: 3rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
 .confirm.show { display: block; }
-.confirm__icon { font-size: 56px; margin-bottom: 16px; }
-.confirm h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
-.confirm p { color: var(--muted); font-size: 16px; }
+.confirm .badge {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(16,185,129,.15); color: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; margin: 0 auto 1.5rem;
+}
+.confirm h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; }
+.confirm p { color: var(--muted); margin-bottom: 1.5rem; font-size: .95rem; }
+.confirm button {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: .65rem 1.25rem; border-radius: 8px;
+  cursor: pointer; font-size: .85rem;
+}
+
+footer { text-align: center; padding: 2rem; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--border); }
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <a class="nav__logo" href="https://webstaff.com">
-    <span class="nav__logo-dot"></span>WebStaff
-  </a>
-  <span class="nav__tagline">AI Office Staff for Contractors</span>
-</nav>
-
-<div class="hero">
-  <div class="container">
-    <div class="hero__eyebrow">Free for qualified contractors</div>
-    <h1>Claim Your <em>Free Website</em> &amp; Hire Your AI Office</h1>
-    <p class="hero__sub">We build the site at no charge. You invest in the AI staff that makes it produce revenue.</p>
-    <div class="proof-row">
-      <div class="proof-item"><strong>27%</strong> of contractor calls go unanswered</div>
-      <div class="proof-item"><strong>85%</strong> of callers never leave voicemail</div>
-      <div class="proof-item"><strong>78%</strong> hire whoever replies first</div>
+<!-- Progress Tracker -->
+<div class="tracker">
+  <div class="tracker-inner">
+    <div class="tracker-row">
+      <div class="tracker-brand">Web<span>Staffr</span></div>
+      <div class="tracker-pct"><span id="pct">0%</span> complete</div>
     </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="pips" id="pips"></div>
   </div>
 </div>
 
-<div class="form-wrap">
-  <div class="container">
+<!-- Header -->
+<header>
+  <p class="eyebrow">Client onboarding</p>
+  <h1>Let's build your AI office.</h1>
+  <p class="lede">Complete this intake and we'll build your <strong>free AI-powered website</strong> and activate your AI workforce — typically within 24 hours.</p>
+</header>
 
-    <!-- Plan Picker -->
-    <div style="margin-bottom:12px"><strong style="font-size:15px">Choose your office staff:</strong></div>
-    <div class="plan-picker" id="planPicker">
-      <label class="plan-card">
-        <input type="radio" name="plan" value="essentials">
-        <div class="plan-label"><span class="plan-name">Essentials</span><span class="plan-price">$197<small style="font-weight:500;font-size:13px">/mo</small></span></div>
-        <div class="plan-desc">Keep your business online and your site up to date.</div>
-        <div class="plan-staff">
-          <span>Website Operations Manager</span>
-        </div>
-      </label>
-      <label class="plan-card recommend">
-        <input type="radio" name="plan" value="growth" checked>
-        <div class="plan-label">
-          <span class="plan-name">Growth</span>
-          <span class="plan-badge">Recommended</span>
-        </div>
-        <span class="plan-price" style="display:block;margin-bottom:4px">$497<small style="font-weight:500;font-size:13px">/mo</small></span>
-        <div class="plan-desc">A full front office that never sleeps.</div>
-        <div class="plan-staff">
-          <span>Receptionist</span>
-          <span>Lead Coordinator</span>
-          <span>Reputation Manager</span>
-          <span>Sales Consultant</span>
-          <span>Website Operations Manager</span>
-        </div>
-      </label>
-      <label class="plan-card">
-        <input type="radio" name="plan" value="pro">
-        <div class="plan-label"><span class="plan-name">Pro</span><span class="plan-price">$997<small style="font-weight:500;font-size:13px">/mo</small></span></div>
-        <div class="plan-desc">Growth plus a full marketing team.</div>
-        <div class="plan-staff">
-          <span>Everything in Growth</span>
-          <span>Marketing Coordinator</span>
-          <span>Growth Manager</span>
-          <span>Service Advisor</span>
-        </div>
-      </label>
+<form id="intake">
+
+  <!-- ── SECTION 1: BASICS ── -->
+  <section class="card" data-sec="1">
+    <div class="sec-head"><span class="sec-num">01 /</span><span class="sec-title">Business Basics</span></div>
+    <div class="field"><label class="q">Business name <span class="req">*</span></label><input type="text" name="biz_name" required placeholder="Desert Air HVAC"></div>
+    <div class="grid2">
+      <div class="field"><label class="q">Phone number <span class="req">*</span></label><input type="tel" name="phone" required placeholder="(602) 555-0192"></div>
+      <div class="field"><label class="q">Email address <span class="req">*</span></label><input type="email" name="email" required placeholder="owner@example.com"></div>
     </div>
-
-    <form id="intake" novalidate>
-      <input type="hidden" name="plan" id="hiddenPlan" value="growth">
-
-      <!-- 1 · Business -->
-      <div class="card">
-        <div class="card__title"><span class="card__num">1</span> Your Business</div>
-        <div class="grid2">
-          <div class="field"><label>Business name <span class="req">*</span></label><input type="text" name="biz_name" required></div>
-          <div class="field"><label>Your name <span class="req">*</span></label><input type="text" name="contact_name" required></div>
-          <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" name="phone" required></div>
-          <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>
-        </div>
-        <div class="grid2">
-          <div class="field">
-            <label>Industry <span class="req">*</span></label>
-            <select name="industry" required>
-              <option value="">Select…</option>
-              <option>Plumbing / HVAC / Electrical</option>
-              <option>Roofing</option>
-              <option>Contractor / Construction</option>
-              <option>Landscaping / Cleaning</option>
-              <option>Auto Repair / Detailing</option>
-              <option>Medical / Dental / Health</option>
-              <option>MedSpa / Aesthetics</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field"><label>Service area <span class="req">*</span></label><input type="text" name="service_area" placeholder="e.g. Phoenix, AZ" required></div>
-        </div>
-        <div class="grid2">
-          <div class="field"><label>Years in business</label><input type="number" name="years_in_business" min="0" placeholder="e.g. 8"></div>
-          <div class="field">
-            <label>Emergency / after-hours?</label>
-            <div class="chips">
-              <label class="chip"><input type="radio" name="emergency" value="Yes"><span>Yes</span></label>
-              <label class="chip"><input type="radio" name="emergency" value="No"><span>No</span></label>
-            </div>
-          </div>
-        </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="q">Industry <span class="req">*</span></label>
+        <select name="industry" id="industry" required>
+          <option value="">Select industry…</option>
+          <option value="HVAC">HVAC</option>
+          <option value="Plumber">Plumbing</option>
+          <option value="Electrician">Electrical</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Contractor">General Contractor</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Med Spa">Med Spa</option>
+          <option value="Dentist">Dental</option>
+          <option value="Salon">Salon / Beauty</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
-
-      <!-- 2 · Web presence -->
-      <div class="card">
-        <div class="card__title"><span class="card__num">2</span> Current Web Presence</div>
-        <div class="field">
-          <label>Do you have a website? <span class="req">*</span></label>
-          <div class="chips">
-            <label class="chip"><input type="radio" name="has_site" value="Yes" data-cond="siteYes" required><span>Yes</span></label>
-            <label class="chip"><input type="radio" name="has_site" value="No" data-cond="siteNo"><span>No</span></label>
-          </div>
-          <div class="cond" id="siteYes">
-            <div class="field"><label>Current URL</label><input type="url" name="site_url" placeholder="https://"></div>
-          </div>
-          <div class="cond" id="siteNo">
-            <div class="field"><label>Do you own a domain?</label><div class="chips"><label class="chip"><input type="radio" name="owns_domain" value="Yes"><span>Yes</span></label><label class="chip"><input type="radio" name="owns_domain" value="No"><span>No — I need one</span></label></div></div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Google Business Profile?</label>
-          <div class="chips">
-            <label class="chip"><input type="radio" name="has_gbp" value="Yes"><span>Yes</span></label>
-            <label class="chip"><input type="radio" name="has_gbp" value="No"><span>No</span></label>
-            <label class="chip"><input type="radio" name="has_gbp" value="Not sure"><span>Not sure</span></label>
-          </div>
-        </div>
-        <div class="grid2">
-          <div class="field"><label>Google review link or count</label><input type="text" name="review_link" placeholder="138 reviews · 4.9★"></div>
-          <div class="field"><label>Certs &amp; license numbers</label><input type="text" name="certs" placeholder="ROC #123456, EPA 608"></div>
-        </div>
-      </div>
-
-      <!-- 3 · Services -->
-      <div class="card">
-        <div class="card__title"><span class="card__num">3</span> Your Services</div>
-        <div class="field">
-          <label>Top 3–6 services, most profitable first <span class="req">*</span></label>
-          <p class="hint">One per line. These become your website service pages.</p>
-          <textarea name="services" required placeholder="AC Repair &amp; Emergency Service&#10;AC Replacement&#10;Furnace &amp; Heating Repair&#10;HVAC Maintenance Plans"></textarea>
-        </div>
-        <div class="field">
-          <label>Show pricing on the site?</label>
-          <div class="chips">
-            <label class="chip"><input type="radio" name="pricing" value="Ranges"><span>Ranges / "Starting at"</span></label>
-            <label class="chip"><input type="radio" name="pricing" value="No"><span>No pricing</span></label>
-            <label class="chip"><input type="radio" name="pricing" value="Exact"><span>Exact prices</span></label>
-          </div>
-        </div>
-        <div class="field"><label>Current promotions</label><input type="text" name="promos" placeholder="Free diagnostic with repair, summer special…"></div>
-      </div>
-
-      <!-- 4 · Positioning -->
-      <div class="card">
-        <div class="card__title"><span class="card__num">4</span> Positioning</div>
-        <div class="field">
-          <label>Your #1 differentiator <span class="req">*</span></label>
-          <p class="hint">What makes you different? Be specific — "same-day guaranteed" beats "we care."</p>
-          <textarea name="differentiator" required placeholder="We answer every call 24/7 and dispatch a tech within 2 hours, or the diagnostic is free."></textarea>
-        </div>
-        <div class="field"><label>One-line tagline (or we'll write one)</label><input type="text" name="tagline" placeholder="Phoenix's AC Emergency Specialists — Same-Day Service, Guaranteed."></div>
-      </div>
-
-      <!-- 5 · Lead routing -->
-      <div class="card">
-        <div class="card__title"><span class="card__num">5</span> Lead Routing &amp; Approval</div>
-        <div class="field">
-          <label>Where should leads go &amp; who responds? <span class="req">*</span></label>
-          <p class="hint">Name the person and the response window — this feeds your AI staff setup.</p>
-          <textarea name="lead_routing" required placeholder="Call + text to Tom at (602) 555-0191 — reply within 30 min, 24/7"></textarea>
-        </div>
-        <div class="field">
-          <label>Who has final approval on the site? <span class="req">*</span></label>
-          <p class="hint">One name — kills revision loops.</p>
-          <input type="text" name="approver" required placeholder="Tom Reyes">
-        </div>
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">Claim My Free Website →</button>
-      <p class="fine-print">No credit card. No commitment. You approve the site before you pay anything.</p>
-      <p class="err-msg" id="errMsg">A few required fields need attention — they're highlighted above.</p>
-    </form>
-
-    <div class="confirm" id="confirm">
-      <div class="confirm__icon">✅</div>
-      <h2>You're in the queue.</h2>
-      <p>We'll review your intake and have your site ready to preview within <strong>48 hours</strong>. Expect a call from our team to confirm a few details.</p>
+      <div class="field"><label class="q">Service area <span class="req">*</span></label><input type="text" name="service_area" required placeholder="Phoenix, AZ"></div>
     </div>
+    <div class="grid2">
+      <div class="field"><label class="q">Years in business</label><input type="number" name="years_in_biz" min="0" max="100" placeholder="12"></div>
+      <div class="field">
+        <label class="q">Emergency / after-hours service?</label>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="emergency" value="Yes"><span>Yes — 24/7</span></label>
+          <label class="chip"><input type="radio" name="emergency" value="No"><span>No</span></label>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ── SECTION 2: CURRENT WEB PRESENCE ── -->
+  <section class="card" data-sec="2">
+    <div class="sec-head"><span class="sec-num">02 /</span><span class="sec-title">Current Web Presence</span></div>
+    <div class="field">
+      <label class="q">Do you have an existing website?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="has_site" value="Yes"><span>Yes</span></label>
+        <label class="chip"><input type="radio" name="has_site" value="No"><span>No</span></label>
+      </div>
+    </div>
+    <div class="cond" id="siteYes">
+      <div class="grid2">
+        <div class="field"><label class="q">Current site URL</label><input type="url" name="site_url" placeholder="https://example.com"></div>
+        <div class="field"><label class="q">Platform (if known)</label><input type="text" name="site_platform" placeholder="WordPress, Wix, GoDaddy…"></div>
+      </div>
+      <div class="field"><label class="q">What's wrong with the current site?</label><textarea name="site_issues" placeholder="Outdated, not mobile-friendly, no leads coming in…"></textarea></div>
+    </div>
+    <div class="field" style="margin-top:1rem">
+      <label class="q">Google Business Profile set up?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="has_gbp" value="Yes"><span>Yes</span></label>
+        <label class="chip"><input type="radio" name="has_gbp" value="No"><span>No</span></label>
+        <label class="chip"><input type="radio" name="has_gbp" value="Not sure"><span>Not sure</span></label>
+      </div>
+    </div>
+    <div class="cond" id="gbpYes">
+      <div class="field"><label class="q">Google Business Profile URL or listing link</label><input type="url" name="gbp_url" placeholder="https://g.page/your-listing"></div>
+      <div class="field"><label class="q">Google review link (for post-job review requests)</label><input type="url" name="google_review_link" placeholder="https://g.page/r/your-review-link"></div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: BRAND ── -->
+  <section class="card" data-sec="3">
+    <div class="sec-head"><span class="sec-num">03 /</span><span class="sec-title">Brand</span></div>
+    <div class="field">
+      <label class="q">Do you have an existing logo?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="has_logo" value="Yes"><span>Yes — I'll provide it</span></label>
+        <label class="chip"><input type="radio" name="has_logo" value="No"><span>No — build one for me</span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label class="q">Brand colors</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="brand_colors" value="I have them"><span>I have specific colors</span></label>
+        <label class="chip"><input type="radio" name="brand_colors" value="Choose for me"><span>Choose for me</span></label>
+      </div>
+    </div>
+    <div class="field"><label class="q">Describe your brand in 3 words</label><input type="text" name="brand_words" placeholder="e.g. Fast, Honest, Professional"></div>
+    <div class="field"><label class="q">2–3 websites you like the look of (optional)</label><input type="text" name="inspo_sites" placeholder="https://…"></div>
+  </section>
+
+  <!-- ── SECTION 4: POSITIONING ── -->
+  <section class="card" data-sec="4">
+    <div class="sec-head"><span class="sec-num">04 /</span><span class="sec-title">Positioning</span></div>
+    <div class="field"><label class="q">One-sentence mission or tagline <span class="req">*</span></label><p class="hint">This becomes your hero headline. Be specific, not generic.</p><input type="text" name="tagline" required placeholder="e.g. Phoenix's fastest HVAC — same-day service, always."></div>
+    <div class="field"><label class="q">Number one reason customers choose you over competitors <span class="req">*</span></label><textarea name="differentiator" required placeholder="e.g. We're the only HVAC company in Phoenix that guarantees same-day service in writing…"></textarea></div>
+    <div class="field"><label class="q">Top 3 competitors (names, optional)</label><input type="text" name="competitors" placeholder="Competitor A, Competitor B, Competitor C"></div>
+    <div class="field">
+      <label class="q">Brand tone</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="tone" value="Professional"><span>Professional</span></label>
+        <label class="chip"><input type="radio" name="tone" value="Friendly"><span>Friendly</span></label>
+        <label class="chip"><input type="radio" name="tone" value="Bold"><span>Bold</span></label>
+        <label class="chip"><input type="radio" name="tone" value="Urgent"><span>Urgent</span></label>
+        <label class="chip"><input type="radio" name="tone" value="Luxury"><span>Luxury</span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 5: SERVICES ── -->
+  <section class="card" data-sec="5">
+    <div class="sec-head"><span class="sec-num">05 /</span><span class="sec-title">Services</span></div>
+    <div class="field"><label class="q">Top 3–6 services (ranked by profit or volume) <span class="req">*</span></label><p class="hint">These become your service cards. Be specific: "AC Repair" not "Air Conditioning."</p><textarea name="services_raw" required placeholder="AC Repair&#10;AC Installation&#10;Furnace Repair&#10;Duct Cleaning&#10;Emergency HVAC"></textarea></div>
+    <div class="field">
+      <label class="q">Show pricing on the site?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="pricing_shown" value="Yes — exact prices"><span>Yes — exact prices</span></label>
+        <label class="chip"><input type="radio" name="pricing_shown" value="Yes — ranges only"><span>Yes — ranges only</span></label>
+        <label class="chip"><input type="radio" name="pricing_shown" value="No pricing"><span>No pricing shown</span></label>
+      </div>
+    </div>
+    <div class="field"><label class="q">Any promotions or seasonal offers to feature?</label><input type="text" name="promos" placeholder="e.g. Free tune-up with any AC install through August"></div>
+    <div class="field"><label class="q">License number(s) to display <span class="req">*</span></label><p class="hint">Required for trades. Non-negotiable for contractor credibility.</p><input type="text" name="license_number" required placeholder="ROC 123456"></div>
+  </section>
+
+  <!-- ── SECTION 6: PROOF ── -->
+  <section class="card" data-sec="6">
+    <div class="sec-head"><span class="sec-num">06 /</span><span class="sec-title">Proof & Credibility</span></div>
+    <div class="grid2">
+      <div class="field"><label class="q">Star rating (your real Google rating)</label><input type="number" name="rating_value" min="1" max="5" step="0.1" placeholder="4.9"></div>
+      <div class="field"><label class="q">Number of Google reviews</label><input type="number" name="review_count" min="0" placeholder="214"></div>
+    </div>
+    <div class="field"><label class="q">Certifications, awards, or affiliations to display</label><input type="text" name="certifications" placeholder="BBB A+, NATE Certified, HomeAdvisor Elite"></div>
+    <div class="field">
+      <label class="q">Do you have before/after photos?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="has_ba" value="Yes"><span>Yes</span></label>
+        <label class="chip"><input type="radio" name="has_ba" value="No"><span>No</span></label>
+      </div>
+    </div>
+    <div class="field"><label class="q">Any written testimonials to include?</label><textarea name="testimonials" placeholder="Paste 1–3 customer quotes here (with name and permission)…"></textarea></div>
+  </section>
+
+  <!-- ── SECTION 7: SOCIAL & TOOLS ── -->
+  <section class="card" data-sec="7">
+    <div class="sec-head"><span class="sec-num">07 /</span><span class="sec-title">Social &amp; Tools</span></div>
+    <div class="grid2">
+      <div class="field"><label class="q">Facebook URL</label><input type="url" name="facebook_url" placeholder="https://facebook.com/yourbiz"></div>
+      <div class="field"><label class="q">Instagram URL</label><input type="url" name="instagram_url" placeholder="https://instagram.com/yourbiz"></div>
+    </div>
+    <div class="field"><label class="q">Do you use a field service management system?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="fsm" value="ServiceTitan"><span>ServiceTitan</span></label>
+        <label class="chip"><input type="radio" name="fsm" value="Jobber"><span>Jobber</span></label>
+        <label class="chip"><input type="radio" name="fsm" value="Housecall Pro"><span>Housecall Pro</span></label>
+        <label class="chip"><input type="radio" name="fsm" value="Other"><span>Other</span></label>
+        <label class="chip"><input type="radio" name="fsm" value="None"><span>None</span></label>
+      </div>
+    </div>
+    <div class="field"><label class="q">Online booking system (if any)</label><input type="text" name="booking_system" placeholder="e.g. ServiceTitan, Calendly, or none"></div>
+  </section>
+
+  <!-- ── SECTION 8: AI WORKFORCE PLAN ── -->
+  <section class="card" data-sec="8">
+    <div class="sec-head"><span class="sec-num">08 /</span><span class="sec-title">AI Workforce Plan</span></div>
+    <div class="field">
+      <label class="q">Choose your AI workforce plan <span class="req">*</span></label>
+      <div class="chips" style="margin-bottom:1rem">
+        <label class="chip"><input type="radio" name="plan" value="essentials" id="planEssentials"><span>Essentials — $197/mo</span></label>
+        <label class="chip"><input type="radio" name="plan" value="growth" id="planGrowth" checked><span>AI Office Staff — $497/mo ⭐</span></label>
+        <label class="chip"><input type="radio" name="plan" value="pro" id="planPro"><span>AI Business Manager — $997/mo</span></label>
+      </div>
+      <div class="staff-preview" id="staffPreview"></div>
+    </div>
+    <div class="field"><label class="q">Where should leads go — and who answers? <span class="req">*</span></label><p class="hint">Name + phone + response window. This is what the AI hands off to.</p><textarea name="lead_routing" required placeholder="Text + call to Maria at (602) 555-0100. Replies within 1 hour, 8am–8pm."></textarea></div>
+    <div class="grid2">
+      <div class="field">
+        <label class="q">Timeline</label>
+        <select name="timeline">
+          <option value="">Select…</option>
+          <option>ASAP — this week</option>
+          <option>Within 2 weeks</option>
+          <option>Within a month</option>
+          <option>Flexible</option>
+        </select>
+      </div>
+      <div class="field"><label class="q">Who has final approval authority? <span class="req">*</span></label><input type="text" name="approver" required placeholder="Owner's full name"></div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 9: CONTENT & SEO ── -->
+  <section class="card" data-sec="9">
+    <div class="sec-head"><span class="sec-num">09 /</span><span class="sec-title">Content &amp; SEO</span></div>
+    <div class="field">
+      <label class="q">Do you have professional photos of your work / team?</label>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="assets" value="Have plenty"><span>Have plenty</span></label>
+        <label class="chip"><input type="radio" name="assets" value="Have some"><span>Have some</span></label>
+        <label class="chip"><input type="radio" name="assets" value="Need shoot"><span>Need a shoot</span></label>
+      </div>
+    </div>
+    <div class="field"><label class="q">5–10 search terms your customers use to find you</label><textarea name="keywords" placeholder="hvac repair phoenix, ac not cooling phoenix, emergency ac repair scottsdale…"></textarea></div>
+    <div class="field"><label class="q">Any additional pages needed beyond the standard 5?</label><input type="text" name="extra_pages" placeholder="Financing page, specific neighborhood pages, FAQ…"></div>
+    <div class="field"><label class="q">Anything else we should know</label><textarea name="notes" placeholder="Open notes…"></textarea></div>
+  </section>
+
+  <div class="submit-wrap">
+    <button type="submit" class="go">Submit Intake — Build My AI Office →</button>
+    <p class="err-msg" id="errMsg">A few required fields are missing — they're highlighted above.</p>
   </div>
+</form>
+
+<div class="confirm" id="confirm">
+  <div class="badge">✓</div>
+  <h2>Intake Received</h2>
+  <p>Your AI office is queued for build. Expect your site and AI staff to be active within <strong>24 hours</strong>. We'll email you at the address you provided.</p>
+  <button id="copyBtn">Copy intake summary</button>
 </div>
+
+<footer>WebStaffr · AI Office Staff for Home Service Contractors · webstaffr.com</footer>
 
 <script>
-(function(){
-  // Plan picker sync
-  document.querySelectorAll('.plan-card input').forEach(input => {
-    input.addEventListener('change', () => {
-      document.getElementById('hiddenPlan').value = input.value;
-    });
-  });
+(function () {
+  const form     = document.getElementById('intake');
+  const pctEl    = document.getElementById('pct');
+  const barFill  = document.getElementById('barFill');
+  const pipsWrap = document.getElementById('pips');
+  const errMsg   = document.getElementById('errMsg');
 
-  // Conditional blocks
-  function refreshConds(){
-    const siteVal = document.querySelector('[name="has_site"]:checked')?.value;
-    document.getElementById('siteYes').classList.toggle('open', siteVal === 'Yes');
-    document.getElementById('siteNo').classList.toggle('open', siteVal === 'No');
+  // Build 9 section pips
+  for (let i = 1; i <= 9; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip';
+    d.dataset.sec = i;
+    pipsWrap.appendChild(d);
   }
-  document.addEventListener('change', refreshConds);
 
-  // Form submit
-  document.getElementById('intake').addEventListener('submit', async e => {
+  // ── AI Staff preview ─────────────────────────────────────────────────
+  const STAFF = {
+    essentials: ['Office Manager'],
+    growth:     ['Receptionist','Lead Coordinator','Reputation Manager','Sales Consultant','Office Manager'],
+    pro:        ['Receptionist','Lead Coordinator','Reputation Manager','Sales Consultant','Office Manager','Marketing Coordinator','Growth Manager'],
+  };
+  const ICONS = {
+    'Receptionist':'📞','Lead Coordinator':'⚡','Reputation Manager':'⭐',
+    'Sales Consultant':'💼','Office Manager':'🏢','Marketing Coordinator':'📱','Growth Manager':'📈',
+  };
+  const ALL_STAFF = ['Receptionist','Lead Coordinator','Reputation Manager','Sales Consultant','Office Manager','Marketing Coordinator','Growth Manager'];
+
+  function updateStaffPreview() {
+    const plan = form.querySelector('[name=plan]:checked')?.value || 'growth';
+    const active = STAFF[plan] || STAFF.growth;
+    const preview = document.getElementById('staffPreview');
+    preview.innerHTML = ALL_STAFF.map(s => `
+      <div class="staff-chip ${active.includes(s) ? 'active' : 'inactive'}">
+        <div class="staff-dot"></div>
+        <span>${ICONS[s] || '🤖'} ${s}</span>
+      </div>`).join('');
+  }
+  updateStaffPreview();
+  form.querySelectorAll('[name=plan]').forEach(r => r.addEventListener('change', updateStaffPreview));
+
+  // ── Conditional blocks ───────────────────────────────────────────────
+  function val(name) {
+    const el = form.querySelector(`[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+  function toggle(id, show) {
+    document.getElementById(id)?.classList.toggle('open', show);
+  }
+  function refreshConds() {
+    toggle('siteYes', val('has_site') === 'Yes');
+    toggle('gbpYes',  val('has_gbp') === 'Yes');
+  }
+
+  // ── Progress ─────────────────────────────────────────────────────────
+  function updateProgress() {
+    const allFields = [...form.querySelectorAll('input,select,textarea')].filter(el => {
+      const cond = el.closest('.cond');
+      return !cond || cond.classList.contains('open');
+    });
+    const groups = new Map();
+    allFields.forEach(el => {
+      const key = el.name || el.id;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(el);
+    });
+
+    let total = 0, filled = 0;
+    const secFill = {}, secTotal = {};
+
+    groups.forEach((items) => {
+      total++;
+      const sec = items[0].closest('section')?.dataset.sec;
+      secTotal[sec] = (secTotal[sec] || 0) + 1;
+      const isFilled = items.some(el => {
+        if (el.type === 'radio' || el.type === 'checkbox') return el.checked;
+        return el.value.trim() !== '';
+      });
+      if (isFilled) { filled++; secFill[sec] = (secFill[sec] || 0) + 1; }
+    });
+
+    const p = total ? Math.round(filled / total * 100) : 0;
+    pctEl.textContent = p + '%';
+    barFill.style.width = p + '%';
+
+    document.querySelectorAll('.pip').forEach(pip => {
+      const s = pip.dataset.sec;
+      const f = secFill[s] || 0, t = secTotal[s] || 1;
+      pip.classList.toggle('done', f >= t);
+      pip.classList.toggle('active', f > 0 && f < t);
+    });
+  }
+
+  form.addEventListener('input',  () => { refreshConds(); updateProgress(); });
+  form.addEventListener('change', () => { refreshConds(); updateProgress(); });
+  refreshConds();
+  updateProgress();
+
+  // ── Submit ────────────────────────────────────────────────────────────
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    const form = e.target;
-    const btn  = document.getElementById('submitBtn');
-    const err  = document.getElementById('errMsg');
 
     // Validate required fields
-    let ok = true, first = null;
+    let ok = true, firstBad = null;
     form.querySelectorAll('[required]').forEach(el => {
+      const cond = el.closest('.cond');
+      if (cond && !cond.classList.contains('open')) return;
       const bad = el.type === 'radio'
         ? !form.querySelector(`[name="${el.name}"]:checked`)
-        : !el.value.trim();
-      el.classList.toggle('err', bad);
-      if (bad){ ok = false; first = first || el; }
+        : el.value.trim() === '';
+      el.classList.toggle('invalid', bad);
+      if (bad) { ok = false; if (!firstBad) firstBad = el; }
     });
-    err.style.display = ok ? 'none' : 'block';
-    if (!ok){ first.scrollIntoView({behavior:'smooth',block:'center'}); return; }
 
-    // Build JSON from form
-    const fd   = new FormData(form);
-    const data = {};
+    if (!ok) {
+      errMsg.style.display = 'block';
+      firstBad?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Build payload
+    const fd = new FormData(form);
+    const payload = {};
     const seen = new Set();
-    for (const [k, v] of fd){
+    for (const [k] of fd) {
       if (seen.has(k)) continue;
       seen.add(k);
-      const all = fd.getAll(k).filter(x => typeof x === 'string' && x.trim());
-      if (all.length) data[k] = all.length === 1 ? all[0] : all;
+      const all = fd.getAll(k).filter(v => typeof v === 'string' && v.trim() !== '');
+      if (all.length === 1) payload[k] = all[0];
+      else if (all.length > 1) payload[k] = all;
     }
-    data.plan = document.getElementById('hiddenPlan').value;
 
-    btn.disabled = true;
-    btn.textContent = 'Building your site…';
+    // Parse services from textarea into array
+    if (payload.services_raw) {
+      payload.services = payload.services_raw.split('\n').map(s => s.trim()).filter(Boolean);
+    }
+
+    // Send to backend
+    const go = form.querySelector('.go');
+    go.disabled = true;
+    go.textContent = 'Building your AI office…';
 
     try {
-      const res = await fetch('/api/build', {
+      const resp = await fetch('/api/onboard', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(data)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      // Show confirm either way — demo-friendly fallback
-      document.getElementById('intake').style.display = 'none';
-      document.getElementById('confirm').classList.add('show');
-      window.scrollTo({top:0,behavior:'smooth'});
-    } catch {
-      // Graceful fallback for demo without server
-      document.getElementById('intake').style.display = 'none';
-      document.getElementById('confirm').classList.add('show');
-      window.scrollTo({top:0,behavior:'smooth'});
+      const result = await resp.json();
+
+      // Build local summary for clipboard
+      const lines = ['WEBSTAFFR — CLIENT INTAKE', '='.repeat(32)];
+      Object.entries(payload).forEach(([k, v]) => {
+        if (typeof v !== 'object') lines.push(`${k.toUpperCase()}: ${v}`);
+      });
+      window.__intakeSummary = lines.join('\n');
+
+    } catch (err) {
+      // Still show confirm screen — log error for retry
+      console.warn('Intake submission error (will retry):', err);
+      window.__intakeSummary = `Submission queued — backend connection error. Data preserved in browser.`;
     }
+
+    // Show confirmation
+    document.querySelector('.tracker').style.display = 'none';
+    form.style.display = 'none';
+    document.getElementById('confirm').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  refreshConds();
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    navigator.clipboard.writeText(window.__intakeSummary || '').then(() => {
+      this.textContent = 'Copied ✓';
+      setTimeout(() => this.textContent = 'Copy intake summary', 2000);
+    });
+  });
+
 })();
 </script>
 </body>

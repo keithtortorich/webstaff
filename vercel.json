@@ -1,34 +1,12 @@
 {
-  "name": "webstaff",
   "version": 2,
-  "buildCommand": "python3 builder/site_generator.py --intake $INTAKE_FILE",
-  "outputDirectory": "clients",
-  "installCommand": "pip install -r requirements.txt",
-  "framework": null,
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/build.py"
-    },
-    {
-      "src": "/clients/(.*)/",
-      "dest": "/clients/$1/index.html"
-    },
-    {
-      "handle": "filesystem"
-    }
+  "builds": [
+    { "src": "backend/main.py", "use": "@vercel/python" }
   ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Frame-Options",        "value": "DENY" },
-        { "key": "X-Content-Type-Options",  "value": "nosniff" },
-        { "key": "Referrer-Policy",         "value": "strict-origin-when-cross-origin" }
-      ]
-    }
+  "routes": [
+    { "src": "/(.*)", "dest": "backend/main.py" }
   ],
   "env": {
-    "PYTHON_VERSION": "3.11"
+    "ENVIRONMENT": "production"
   }
 }

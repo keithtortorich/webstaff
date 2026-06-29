@@ -1,79 +1,163 @@
-# WebStaff — AI Workforce for Home Service Businesses
+# WebStaffr — AI Office Staff for Home Service Contractors
 
 > *We run the office while contractors run the business.*
 
-WebStaff builds client websites and deploys a named AI workforce — Receptionist, Lead Coordinator, Reputation Manager, and more — based on the client's chosen plan. The website is free. Clients invest in the AI staff that makes it produce revenue.
+**Beachhead:** Phoenix HVAC | **Stack:** FastAPI · SQLite→Postgres · Twilio · OpenAI · Netlify
+
+---
+
+## What It Does
+
+WebStaffr builds a free AI-powered website for home service contractors and deploys a named AI workforce that runs their front office 24/7. Contractors keep their existing field-service software (ServiceTitan, Jobber, Housecall Pro). WebStaffr makes sure more customers reach it.
+
+---
+
+## AI Workforce
+
+| Employee | Department | Trigger | Action |
+|---|---|---|---|
+| **Receptionist** | Front Office | Missed call | Instant personalized SMS callback |
+| **Lead Coordinator** | Front Office | Form submit | SMS + email within 60 seconds |
+| **Reputation Manager** | Marketing | Job complete | Google review request SMS |
+| **Sales Consultant** | Sales | Estimate request | Follow-up email with proposal |
+| **Office Manager** | Operations | Always on | Hosting, integrations, site health |
+
+---
+
+## Workforce Plans
+
+| Plan | Price | Staff |
+|---|---|---|
+| **Essentials** | $197/mo | Office Manager |
+| **AI Office Staff** *(recommended)* | $497/mo | + Receptionist, Lead Coordinator, Reputation Manager, Sales Consultant |
+| **AI Business Manager** | $997/mo | + Marketing Coordinator, Growth Manager, Local SEO, CRM Automation |
+
+---
+
+## Platform Integrations
+
+WebStaffr integrates with FSM platforms contractors already use — not replaces them.
+
+| Platform | Phase | Status |
+|---|---|---|
+| ServiceTitan | Phase 1 (Zapier bridge) | Active in MVP |
+| ServiceTitan | Phase 2 (native OAuth API) | Weeks 4–8 |
+| Jobber | Phase 2 | Same architecture |
+| Housecall Pro | Phase 2 | Same architecture |
+| ST App Marketplace | Phase 4 | Months 3–6 |
+
+> *"What happens when ServiceTitan builds this?" → We want them to. It validates the category. We're the front-office specialist that benefits from their distribution.*
+
+---
+
+## Architecture
+
+```
+Trigger (call / form / job complete)
+    ↓
+FastAPI webhook receiver  (backend/main.py)
+    ↓
+Agent handler fires  (backend/agents/)
+    ↓
+OpenAI personalizes → Twilio / SendGrid executes
+    ↓
+DB logs result → Dashboard updates
+```
+
+Each AI employee is one file, one trigger, one OpenAI call, one API action. No orchestration framework. Fully debuggable. Near-zero marginal cost at scale.
 
 ---
 
 ## Project Structure
 
 ```
-webstaff/
-├── intake/
-│   └── intake.html              # Client onboarding form (auto-submits to build API)
-├── api/
-│   └── build.py                 # Flask API: receives intake JSON → triggers build
+webstaffr/
+├── backend/
+│   ├── main.py                      # FastAPI entry point
+│   ├── agents/
+│   │   ├── receptionist.py          # Missed call → SMS
+│   │   ├── lead_coordinator.py      # Form submit → SMS + email
+│   │   ├── reputation_manager.py    # Job complete → review SMS
+│   │   └── sales_consultant.py      # Estimate → follow-up email
+│   ├── routes/
+│   │   ├── webhooks.py              # Twilio + form inbound
+│   │   ├── dashboard.py             # Admin API
+│   │   └── integrations.py          # ServiceTitan / Jobber / HCP
+│   └── db/
+│       ├── models.py                # SQLAlchemy schema
+│       └── crud.py                  # DB helpers
 ├── builder/
-│   └── site_generator.py        # Core site generator (run directly or via API)
-├── website-template-v2/
-│   └── index.html               # Base HTML template with {{placeholders}}
-├── clients/                     # Output: generated client sites (gitignored)
+│   └── site_generator.py            # Intake JSON → deployed site
+├── frontend/
+│   └── dashboard/
+│       └── index.html               # Operator dashboard
+├── intake/
+│   └── intake.html                  # 9-section client onboarding form
+├── website-template-v2/             # Base client site template
+│   ├── index.html
+│   ├── css/style.css
+│   └── js/main.js
 ├── tests/
 │   └── fixtures/
-│       └── example_intake.json  # Example intake for CI + local testing
-├── github_workflows/            # Copy contents to .github/workflows/
-│   ├── build.yml                # CI: validate + build on push
-│   └── deploy.yml               # CD: deploy to Netlify or Vercel
+│       └── example_intake.json
+├── docs/
+│   ├── servicetitan_integration.md
+│   └── deploy.md
+├── .env.example
+├── .gitignore
+├── requirements.txt
 ├── netlify.toml
-├── vercel.json
-└── requirements.txt
+└── vercel.json
 ```
-
-> **Note:** Rename `github_workflows/` to `.github/workflows/` in your repo.
-
----
-
-## Workforce Plans
-
-| Plan | Price | AI Staff Deployed |
-|---|---|---|
-| **Essentials** | $197/mo | Website Operations Manager |
-| **Growth** *(recommended)* | $497/mo | + Receptionist, Lead Coordinator, Reputation Manager, Sales Consultant |
-| **Pro** | $997/mo | + Marketing Coordinator, Growth Manager, Service Advisor |
 
 ---
 
 ## Quick Start
 
-### 1. Install dependencies
-
 ```bash
+# 1. Install
 pip install -r requirements.txt
+
+# 2. Configure
+cp .env.example .env
+# Fill in: OPENAI_API_KEY, TWILIO_*, SENDGRID_API_KEY
+
+# 3. Run backend
+uvicorn backend.main:app --reload --port 8000
+
+# 4. Build a client site
+python builder/site_generator.py --intake tests/fixtures/example_intake.json
+
+# 5. Open dashboard
+open http://localhost:8000/dashboard
+open http://localhost:8000/docs
 ```
 
-### 2. Build a site from an intake file
+---
+
+## Testing Agent Actions
 
 ```bash
-python3 builder/site_generator.py --intake tests/fixtures/example_intake.json
+# Simulate missed call
+curl -X POST http://localhost:8000/webhooks/voice/incoming \
+  -d "To=+16025550192&From=+16025559999"
+
+# Simulate lead form
+curl -X POST http://localhost:8000/webhooks/lead-form \
+  -H "Content-Type: application/json" \
+  -d '{"client_id":"CLIENT_ID","name":"John Smith","phone":"+16025559876","message":"AC not cooling"}'
+
+# Simulate job complete → review request
+curl -X POST http://localhost:8000/webhooks/job-complete \
+  -H "Content-Type: application/json" \
+  -d '{"client_id":"CLIENT_ID","customer_phone":"+16025559876","customer_name":"John Smith","job_type":"AC Repair","google_review_link":"https://g.page/r/your-link"}'
 ```
 
-Output is written to `clients/<biz_slug>_<date>/`.
+---
 
-### 3. Validate intake without building
+## Deployment
 
-```bash
-python3 builder/site_generator.py --intake my_client.json --validate
-```
-
-### 4. Run the build API locally
-
-```bash
-python3 api/build.py
-# API runs at http://localhost:5050
-```
-
-Then open `intake/intake.html` in a browser. The form auto-submits to `http://localhost:5050/api/build`.
+See `docs/deploy.md` for Railway, Render, and Netlify instructions.
 
 ---
 
@@ -81,71 +165,28 @@ Then open `intake/intake.html` in a browser. The form auto-submits to `http://lo
 
 ```json
 {
-  "biz_name":     "Apex Plumbing LLC",       // required
-  "phone":        "(512) 555-0192",           // required
+  "biz_name":     "Desert Air HVAC",
+  "phone":        "(602) 555-0192",
   "email":        "owner@example.com",
-  "industry":     "Plumber",                  // required: Contractor | Plumber | Dentist | Med Spa | Restaurant | Other
-  "service_area": "Austin, TX",               // required
-  "site_url":     "https://example.com",
-  "tagline":      "Fast, reliable plumbing.", 
-  "plan":         "growth",                   // required: essentials | growth | pro
-  "rating_value": 4.9,                        // optional — only include if real
-  "review_count": 138                         // optional — only include if real
+  "industry":     "HVAC",
+  "service_area": "Phoenix, AZ",
+  "tagline":      "Same-day HVAC service guaranteed.",
+  "plan":         "growth",
+  "rating_value": 4.9,
+  "review_count": 214,
+  "services":     ["AC Repair", "AC Install", "Furnace Repair", "Duct Cleaning"]
 }
 ```
 
----
-
-## Deployment
-
-### Netlify
-
-1. Add secrets to Netlify: `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`
-2. Set environment variable `INTAKE_FILE` per site to the path of your intake JSON
-3. Push to `main` — GitHub Actions deploys automatically
-
-### Vercel
-
-1. Add secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
-2. Set `INTAKE_FILE` in Vercel project settings
-3. Push to `main` — auto-deploy via GitHub Actions
-
-### Manual deploy trigger
-
-Use the `workflow_dispatch` trigger in GitHub Actions to deploy any intake file to either platform on demand.
-
----
-
-## GitHub Actions Secrets Required
-
-| Secret | Used by |
-|---|---|
-| `NETLIFY_AUTH_TOKEN` | deploy.yml → Netlify |
-| `NETLIFY_SITE_ID` | deploy.yml → Netlify |
-| `VERCEL_TOKEN` | deploy.yml → Vercel |
-| `VERCEL_ORG_ID` | deploy.yml → Vercel |
-| `VERCEL_PROJECT_ID` | deploy.yml → Vercel |
-
----
-
-## AI Workforce Widget
-
-The generated site includes an interactive workforce panel that:
-
-- Shows all possible AI staff roles organized by department (Front Office, Marketing, Sales, Operations)
-- Highlights which roles are **active** on the client's plan
-- Grays out roles not included (showing upgrade potential)
-- Fires a toast notification from the Receptionist on Growth/Pro plans
-- Uses `IntersectionObserver` to render on scroll for performance
-
-The active features are embedded by the builder into a `data-features` attribute read by the site's JS — no backend call required at runtime.
+**Industries:** `Contractor` | `HVAC` | `Plumber` | `Electrician` | `Roofing` | `Restaurant` | `Med Spa` | `Dentist` | `Other`  
+**Plans:** `essentials` | `growth` | `pro`
 
 ---
 
 ## Adding a New AI Employee
 
-1. Add the role to `WORKFORCE_BY_PLAN` in `builder/site_generator.py`
-2. Add the matching entry to `ALL_STAFF` in `website-template-v2/index.html`
-3. Add the chip to `WORKFORCE` in `intake/intake.html`
+1. Add the agent file to `backend/agents/`
+2. Add the route trigger to `backend/routes/webhooks.py`
+3. Add the staff card to `website-template-v2/index.html` and `intake/intake.html`
 
-That's it — the new role automatically appears in intake previews, generated sites, and build manifests.
+That's it — the new employee appears in intake previews, generated sites, and the dashboard.

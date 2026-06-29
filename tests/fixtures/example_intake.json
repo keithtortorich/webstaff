@@ -1,0 +1,26 @@
+{
+  "biz_name": "Desert Air HVAC",
+  "phone": "(602) 555-0192",
+  "email": "owner@desertairhvac.com",
+  "industry": "HVAC",
+  "service_area": "Phoenix, AZ",
+  "tagline": "Phoenix's most trusted HVAC — same-day service guaranteed.",
+  "plan": "growth",
+  "years_in_biz": 12,
+  "license_number": "ROC 312456",
+  "rating_value": 4.9,
+  "review_count": 214,
+  "google_review_link": "https://g.page/r/your-review-link",
+  "services": [
+    "AC Repair",
+    "AC Installation",
+    "Furnace Repair",
+    "Duct Cleaning",
+    "Emergency HVAC",
+    "Maintenance Plans"
+  ],
+  "fsm": "ServiceTitan",
+  "emergency": "Yes",
+  "differentiator": "We're the only HVAC company in Phoenix that guarantees same-day service in writing — or the diagnostic is free.",
+  "tone": "Professional"
+}

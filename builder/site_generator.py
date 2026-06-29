@@ -1,167 +1,224 @@
 #!/usr/bin/env python3
 """
-WebStaff Client Site Generator
-Produces a complete, investor-ready client website from an intake JSON.
+WebStaffr Site Generator
+Intake JSON → fully deployed static client site
+
 Usage:
-  python3 builder/site_generator.py --intake tests/fixtures/example_intake.json
-  python3 builder/site_generator.py --intake client.json --validate
+    python builder/site_generator.py --intake tests/fixtures/example_intake.json
+    python builder/site_generator.py --intake client.json --validate
+    python builder/site_generator.py --intake client.json --deploy
 """
 
-import os, shutil, json, argparse, re
+import os
+import sys
+import json
+import shutil
+import argparse
 from pathlib import Path
 from datetime import datetime
 
 TEMPLATE_DIR = Path(__file__).parent.parent / "website-template-v2"
 OUTPUT_BASE  = Path(__file__).parent.parent / "clients"
+API_BASE     = os.getenv("BASE_URL", "http://localhost:8000")
 
-# ── Industry presets ──────────────────────────────────────────────────────────
+# ── Industry presets (from perfect_site spec) ────────────────────────────────
+
 INDUSTRY_PRESETS = {
-    "Contractor / Construction": {
-        "fonts":   "Oswald:wght@700&family=Inter:wght@400;600",
-        "primary": "#1a1a1a", "accent": "#d97706", "vibe": "rugged",
-        "type":    "GeneralContractor",
+    "Contractor": {
+        "slug": "contractor",
+        "font_family": "Oswald:wght@700&family=Inter:wght@400;600",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#1a1a1a",
+        "accent": "#d97706",
+        "icon": "🔨",
+        "default_tagline": "Quality construction and remodeling — done right the first time.",
+        "default_services": ["General Contracting", "Home Remodeling", "New Construction", "Renovation"],
     },
-    "Plumbing / HVAC / Electrical": {
-        "fonts":   "Archivo+Black:wght@400&family=Inter:wght@400;600",
-        "primary": "#1e3a8a", "accent": "#ef4444", "vibe": "urgent",
-        "type":    "Plumber",
+    "HVAC": {
+        "slug": "hvac",
+        "font_family": "Oswald:wght@700&family=Inter:wght@400;600",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#1e3a5f",
+        "accent": "#0ea5e9",
+        "icon": "❄️",
+        "default_tagline": "Same-day HVAC service — keep your home comfortable year-round.",
+        "default_services": ["AC Repair", "AC Installation", "Furnace Repair", "Duct Cleaning", "Emergency HVAC"],
+    },
+    "Plumber": {
+        "slug": "plumber",
+        "font_family": "Archivo+Black:wght@400&family=Inter:wght@400;600",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#1e3a8a",
+        "accent": "#ef4444",
+        "icon": "🔧",
+        "default_tagline": "Plumbing emergencies handled fast — licensed & insured.",
+        "default_services": ["Emergency Plumbing", "Pipe Repair", "Water Heater", "Drain Cleaning", "Leak Detection"],
+    },
+    "Electrician": {
+        "slug": "electrician",
+        "font_family": "Sora:wght@700&family=Inter:wght@400;500",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#1c1c1c",
+        "accent": "#f59e0b",
+        "icon": "⚡",
+        "default_tagline": "Licensed electrician — safe, code-compliant, same-day service.",
+        "default_services": ["Panel Upgrades", "Wiring & Rewiring", "EV Charger Install", "Lighting", "Emergency Electrical"],
     },
     "Roofing": {
-        "fonts":   "Oswald:wght@700&family=Inter:wght@400;600",
-        "primary": "#1a1a1a", "accent": "#d97706", "vibe": "rugged",
-        "type":    "RoofingContractor",
+        "slug": "roofing",
+        "font_family": "Oswald:wght@700&family=Inter:wght@400;600",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#292524",
+        "accent": "#dc2626",
+        "icon": "🏠",
+        "default_tagline": "Protect your home — roof repair & replacement done right.",
+        "default_services": ["Roof Repair", "Roof Replacement", "Storm Damage", "Gutters", "Free Inspection"],
     },
-    "Medical / Dental / Health": {
-        "fonts":   "Outfit:wght@600&family=Inter:wght@400;500",
-        "primary": "#0f766e", "accent": "#14b8a6", "vibe": "clean",
-        "type":    "MedicalBusiness",
+    "Restaurant": {
+        "slug": "restaurant",
+        "font_family": "Playfair+Display:wght@700&family=Inter:wght@400;500",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#78350f",
+        "accent": "#b45309",
+        "icon": "🍽️",
+        "default_tagline": "Fresh ingredients, unforgettable flavors — come dine with us.",
+        "default_services": ["Dine-In", "Takeout", "Catering", "Private Events", "Happy Hour"],
     },
-    "MedSpa / Aesthetics": {
-        "fonts":   "Cormorant+Garamond:wght@700&family=Inter:wght@400;500",
-        "primary": "#4c1d95", "accent": "#c026d3", "vibe": "luxury",
-        "type":    "HealthAndBeautyBusiness",
+    "Med Spa": {
+        "slug": "medspa",
+        "font_family": "Cormorant+Garamond:wght@700&family=Inter:wght@400;500",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#4c1d95",
+        "accent": "#c026d3",
+        "icon": "✨",
+        "default_tagline": "Luxury treatments. Real results. You deserve to feel remarkable.",
+        "default_services": ["Botox & Fillers", "Laser Treatments", "Hydrafacial", "Body Contouring", "Skin Rejuvenation"],
     },
-    "Landscaping / Cleaning": {
-        "fonts":   "Inter:wght@400;700",
-        "primary": "#14532d", "accent": "#16a34a", "vibe": "fresh",
-        "type":    "HomeAndConstructionBusiness",
+    "Dentist": {
+        "slug": "dentist",
+        "font_family": "Outfit:wght@600&family=Inter:wght@400;500",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#0f766e",
+        "accent": "#14b8a6",
+        "icon": "🦷",
+        "default_tagline": "Gentle, modern dentistry — smile with confidence.",
+        "default_services": ["Teeth Whitening", "Invisalign", "Dental Implants", "Emergency Dentistry", "Cleanings & Exams"],
     },
-    "Auto Repair / Detailing": {
-        "fonts":   "Sora:wght@600&family=Inter:wght@400;500",
-        "primary": "#1e1e2e", "accent": "#f59e0b", "vibe": "energetic",
-        "type":    "AutoRepair",
+    "Salon": {
+        "slug": "salon",
+        "font_family": "DM+Serif+Display:wght@400&family=Inter:wght@400;500",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#831843",
+        "accent": "#ec4899",
+        "icon": "💇",
+        "default_tagline": "Expert cuts, color, and style — where you feel your best.",
+        "default_services": ["Haircuts & Styling", "Color & Highlights", "Balayage", "Keratin Treatment", "Blowouts"],
     },
     "Other": {
-        "fonts":   "Inter:wght@400;600",
-        "primary": "#1e40af", "accent": "#3b82f6", "vibe": "modern",
-        "type":    "LocalBusiness",
+        "slug": "other",
+        "font_family": "Inter:wght@400;600;800",
+        "font_css": "--font:'Inter',sans-serif;",
+        "primary": "#1e40af",
+        "accent": "#3b82f6",
+        "icon": "🏢",
+        "default_tagline": "Professional service you can count on.",
+        "default_services": ["Service 1", "Service 2", "Service 3"],
     },
 }
 
-# ── Default services by trade ─────────────────────────────────────────────────
-DEFAULT_SERVICES = {
-    "Plumbing / HVAC / Electrical": [
-        ("🌡️", "AC Repair & Replacement",    "Emergency repair and new system installation. Same-day service when your AC fails."),
-        ("🔥", "Heating & Furnace",           "Heat pump, furnace, and boiler installation, repair, and tune-ups."),
-        ("💧", "Plumbing Services",           "Leak repair, water heater, drain cleaning, and full repiping."),
-        ("⚡", "Electrical",                   "Panel upgrades, outlets, EV chargers, and whole-home wiring."),
-        ("🛠️", "Maintenance Plans",            "Annual tune-ups and priority service to keep systems running all year."),
-        ("🌿", "Indoor Air Quality",           "Air purifiers, humidifiers, UV lights, and duct cleaning."),
-    ],
-    "Roofing": [
-        ("🏠", "Roof Repair",                 "Leaks, missing shingles, storm damage — diagnosed and fixed fast."),
-        ("🔨", "Roof Replacement",            "Full tear-off with premium materials and a 10-year workmanship warranty."),
-        ("🌧️", "Gutter Installation",         "Seamless gutters and gutter guards that protect your foundation."),
-        ("💨", "Storm Damage Repair",         "Insurance claims assistance and emergency tarping, 24/7."),
-        ("☀️", "Skylight Installation",       "Energy-efficient skylights with leak-proof professional flashing."),
-        ("🔍", "Roof Inspection",             "Drone inspection with a detailed written report — free with any estimate."),
-    ],
-    "Contractor / Construction": [
-        ("🪟", "Windows & Doors",             "Replacement windows and exterior doors that cut energy bills."),
-        ("🏡", "Siding & Exteriors",          "Vinyl, fiber cement, and hardie board — installed right the first time."),
-        ("🛁", "Bathroom Remodel",            "Full gut-and-rebuild or targeted upgrades. Fixed-price quotes."),
-        ("🍳", "Kitchen Remodel",             "Custom cabinets, countertops, and full kitchen transformations."),
-        ("🏗️", "Additions",                   "Room additions, garage conversions, and ADU construction."),
-        ("🔧", "Handyman & Repairs",          "No job too small. Licensed, insured, and background-checked."),
-    ],
-    "Other": [
-        ("⭐", "Our Core Service",            "Professional, reliable work delivered on time and on budget."),
-        ("🛡️", "Quality Guarantee",           "We stand behind every job with a written satisfaction guarantee."),
-        ("📞", "Fast Response",               "Call or text — we reply within the hour, every day of the week."),
-    ],
+PLAN_STAFF = {
+    "essentials": ["Office Manager"],
+    "growth":     ["Receptionist", "Lead Coordinator", "Reputation Manager", "Sales Consultant", "Office Manager"],
+    "pro":        ["Receptionist", "Lead Coordinator", "Reputation Manager", "Sales Consultant",
+                   "Office Manager", "Marketing Coordinator", "Growth Manager"],
 }
 
-# ── WebStaff workforce plan definitions ──────────────────────────────────────
-WORKFORCE_BY_PLAN = {
-    "essentials": ["Website Operations Manager"],
-    "growth": [
-        "Website Operations Manager", "Receptionist", "Lead Coordinator",
-        "Reputation Manager", "Sales Consultant",
-    ],
-    "pro": [
-        "Website Operations Manager", "Receptionist", "Lead Coordinator",
-        "Reputation Manager", "Sales Consultant",
-        "Marketing Coordinator", "Growth Manager", "Service Advisor",
-    ],
+
+# ── Validation ────────────────────────────────────────────────────────────────
+
+def validate_intake(data: dict) -> list[str]:
+    errors = []
+    for f in ["biz_name", "phone", "plan"]:
+        if not data.get(f):
+            errors.append(f"Missing required field: {f}")
+    if data.get("plan") and data["plan"] not in ("essentials", "growth", "pro"):
+        errors.append("plan must be: essentials | growth | pro")
+    if data.get("rating_value") and not (1.0 <= float(data["rating_value"]) <= 5.0):
+        errors.append("rating_value must be between 1.0 and 5.0")
+    return errors
+
+
+# ── HTML fragment builders ─────────────────────────────────────────────────────
+
+SERVICE_ICONS = {
+    "ac repair": "❄️", "ac install": "🔧", "furnace": "🔥", "duct": "💨",
+    "emergency": "🚨", "plumb": "🔧", "pipe": "🔩", "water heater": "🌡️",
+    "drain": "🌊", "electric": "⚡", "panel": "🔌", "wiring": "💡",
+    "roof": "🏠", "gutter": "🌧️", "storm": "⛈️", "remodel": "🔨",
+    "paint": "🎨", "floor": "🪵", "tile": "🔲", "kitchen": "🍳",
+    "bath": "🛁", "hvac": "❄️", "dental": "🦷", "laser": "✨",
+    "botox": "💉", "skin": "🌸", "massage": "💆", "hair": "💇",
+    "color": "🎨", "catering": "🍽️", "booking": "📅",
 }
 
-ALL_STAFF = [
-    {"name": "Receptionist",              "dept": "Front Office",  "desc": "Answers every call, 24/7"},
-    {"name": "Lead Coordinator",          "dept": "Front Office",  "desc": "Replies in seconds, keeps leads warm"},
-    {"name": "Appointment Scheduler",     "dept": "Front Office",  "desc": "Books jobs while you're on the roof"},
-    {"name": "Reputation Manager",        "dept": "Marketing",     "desc": "Earns 5-star reviews on autopilot"},
-    {"name": "Marketing Coordinator",     "dept": "Marketing",     "desc": "Keeps the business visible every day"},
-    {"name": "Growth Manager",            "dept": "Marketing",     "desc": "Brings homeowners from Google & AI search"},
-    {"name": "Service Advisor",           "dept": "Sales",         "desc": "Pre-qualifies calls before trucks roll"},
-    {"name": "Sales Consultant",          "dept": "Sales",         "desc": "Helps customers say yes to bigger jobs"},
-    {"name": "Website Operations Manager","dept": "Operations",    "desc": "Keeps the site live and current, hands-free"},
-]
+def _service_icon(name: str) -> str:
+    name_lower = name.lower()
+    for k, v in SERVICE_ICONS.items():
+        if k in name_lower:
+            return v
+    return "✅"
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
-def slugify(text: str) -> str:
-    return re.sub(r"[^a-z0-9-]", "", text.lower().replace(" ", "-").replace("--", "-")).strip("-") or "client"
 
-def city_only(service_area: str) -> str:
-    return service_area.split(",")[0].strip()
+def build_services_html(services: list[str], industry: str) -> str:
+    preset = INDUSTRY_PRESETS.get(industry, INDUSTRY_PRESETS["Other"])
+    cards = []
+    for svc in services[:6]:  # cap at 6 per perfect_site spec
+        icon = _service_icon(svc)
+        cards.append(f"""      <div class="service-card">
+        <div class="service-card__icon">{icon}</div>
+        <h3>{svc}</h3>
+        <p>Professional {svc.lower()} service — licensed, insured, and backed by our guarantee.</p>
+        <a href="#contact" class="service-card__link">Get free estimate →</a>
+      </div>""")
+    return "\n".join(cards)
 
-def phone_clean(phone: str) -> str:
-    d = re.sub(r"\D", "", phone)
-    if len(d) == 11 and d[0] == "1":
-        d = d[1:]
-    if len(d) == 10:
-        return f"({d[:3]}) {d[3:6]}-{d[6:]}"
-    return phone
 
-def phone_digits(phone: str) -> str:
-    d = re.sub(r"\D", "", phone)
-    return d[1:] if len(d) == 11 and d[0] == "1" else d
+def build_footer_services_html(services: list[str]) -> str:
+    return "\n".join(f'        <li><a href="#services">{s}</a></li>' for s in services[:5])
 
-# ── SEO / Schema generation ───────────────────────────────────────────────────
-def generate_seo_meta(data: dict, preset: dict) -> str:
-    city    = city_only(data.get("service_area", "Your City"))
-    biz     = data.get("biz_name", "Your Business")
-    industry = data.get("industry", "Service")
-    phone   = data.get("phone", "(555) 000-0000")
-    tagline = data.get("tagline", f"Professional {industry.lower()} services in {city}.")
-    title   = f"{industry} in {city} | {biz}"
-    desc    = f"{tagline} Fast response, quality work. Call {phone} today."
-    return f"""<title>{title}</title>
-<meta name="description" content="{desc}">
-<meta property="og:title" content="{title}">
-<meta property="og:description" content="{desc}">
-<meta property="og:type" content="website">"""
 
-def generate_json_ld(data: dict, preset: dict) -> str:
-    city    = city_only(data.get("service_area", "Your City"))
-    biz     = data.get("biz_name", "Your Business")
-    phone_d = phone_digits(data.get("phone", "5550000000"))
-    schema_type = preset.get("type", "LocalBusiness")
+def build_social_links_html(data: dict) -> str:
+    links = []
+    for platform, label in [("facebook_url","Facebook"),("instagram_url","Instagram"),("google_url","Google")]:
+        url = data.get(platform)
+        if url:
+            links.append(f'<a href="{url}" target="_blank" rel="noopener">{label}</a>')
+    return " · ".join(links) if links else ""
+
+
+# ── SEO / Schema injection ────────────────────────────────────────────────────
+
+def build_seo_block(data: dict, preset: dict) -> str:
+    city = (data.get("service_area","") or "").split(",")[0].strip()
+    biz  = data.get("biz_name","")
+    ind  = data.get("industry","")
+    phone= data.get("phone","")
+    url  = data.get("site_url","")
+
+    title = f"{ind} in {city} | {biz}" if city else f"{biz} | {ind}"
+    desc  = (
+        f"Professional {ind.lower()} in {city}. "
+        f"Fast response, quality work, licensed & insured. "
+        f"Call {phone} today."
+    ).strip()
 
     schema = {
         "@context": "https://schema.org",
-        "@type": schema_type,
+        "@type": "LocalBusiness",
         "name": biz,
-        "telephone": f"+1{phone_d}",
+        "telephone": phone,
+        "url": url,
+        "description": desc,
         "address": {
             "@type": "PostalAddress",
             "addressLocality": city,
@@ -169,387 +226,186 @@ def generate_json_ld(data: dict, preset: dict) -> str:
         },
         "priceRange": "$$",
     }
-    # Only add aggregateRating if real data provided
-    rv = data.get("rating_value")
-    rc = data.get("review_count")
-    if rv and rc:
+    if data.get("rating_value") and data.get("review_count"):
         schema["aggregateRating"] = {
             "@type": "AggregateRating",
-            "ratingValue": str(rv),
-            "reviewCount": str(rc),
-            "bestRating": "5",
+            "ratingValue": str(data["rating_value"]),
+            "reviewCount": str(data["review_count"]),
         }
-    return f'<script type="application/ld+json">\n{json.dumps(schema, indent=2)}\n</script>'
+    if url:
+        schema["sameAs"] = [url]
 
-# ── Workforce panel HTML ──────────────────────────────────────────────────────
-def generate_workforce_panel(plan: str) -> str:
-    active = set(WORKFORCE_BY_PLAN.get(plan, WORKFORCE_BY_PLAN["growth"]))
-    depts: dict[str, list] = {}
-    for s in ALL_STAFF:
-        depts.setdefault(s["dept"], []).append(s)
+    schema_str = json.dumps(schema, indent=2)
 
-    html = ['<div class="workforce-panel" data-plan="' + plan + '">',
-            '<div class="workforce-panel__header">',
-            '<span class="workforce-panel__label">Your AI Office Staff</span>',
-            f'<span class="workforce-panel__plan">{plan.title()} Plan</span>',
-            '</div>']
+    return f"""  <title>{title}</title>
+  <meta name="description" content="{desc}">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{desc}">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{url}">
+  <script type="application/ld+json">
+{schema_str}
+  </script>"""
 
-    for dept, staff_list in depts.items():
-        html.append(f'<div class="workforce-dept"><h4 class="workforce-dept__name">{dept}</h4><div class="workforce-dept__staff">')
-        for s in staff_list:
-            is_active = s["name"] in active
-            cls = "workforce-member" + (" workforce-member--active" if is_active else " workforce-member--inactive")
-            badge = "✓ Active" if is_active else "Available"
-            html.append(
-                f'<div class="{cls}">'
-                f'<span class="workforce-member__name">{s["name"]}</span>'
-                f'<span class="workforce-member__desc">{s["desc"]}</span>'
-                f'<span class="workforce-member__badge">{badge}</span>'
-                f'</div>'
-            )
-        html.append('</div></div>')
 
-    html.append('</div>')
-    return "\n".join(html)
+# ── Core build ────────────────────────────────────────────────────────────────
 
-# ── Service cards ─────────────────────────────────────────────────────────────
-def generate_service_cards(data: dict) -> str:
+def sanitize_slug(name: str) -> str:
+    return "".join(c if c.isalnum() else "_" for c in name.lower()).strip("_") or "client"
+
+
+def build_site(data: dict, output_dir: Path, debug: bool = False) -> bool:
     industry = data.get("industry", "Other")
-    services_raw = data.get("services", "")
+    preset   = INDUSTRY_PRESETS.get(industry, INDUSTRY_PRESETS["Other"])
+    services = data.get("services") or preset["default_services"]
+    plan     = data.get("plan", "growth")
 
-    # Parse custom services from intake
-    custom = [s.strip() for s in services_raw.split("\n") if s.strip()]
-    if custom:
-        services = [(f"⚙️", s, f"Professional {s.lower()} — quality workmanship, honest pricing.") for s in custom[:6]]
+    # Copy template
+    if TEMPLATE_DIR.exists():
+        shutil.copytree(str(TEMPLATE_DIR), str(output_dir), dirs_exist_ok=True)
     else:
-        services = DEFAULT_SERVICES.get(industry, DEFAULT_SERVICES["Other"])
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-    delay_classes = ["", " reveal--delay-1", " reveal--delay-2", " reveal--delay-3", " reveal--delay-4", " reveal--delay-4"]
-    cards = []
-    for i, (icon, title, desc) in enumerate(services[:6]):
-        slug = slugify(title)
-        cards.append(f"""        <article class="service-card reveal{delay_classes[i]}">
-          <div class="service-card__icon" aria-hidden="true">{icon}</div>
-          <h3 class="service-card__title">{title}</h3>
-          <p class="service-card__desc">{desc}</p>
-          <a href="services/{slug}.html" class="service-card__link">{title} in {{{{CITY}}}}</a>
-        </article>""")
-    return "\n".join(cards)
+    index_path = output_dir / "index.html"
+    if not index_path.exists():
+        print(f"  ⚠️  Template index.html missing at {TEMPLATE_DIR}")
+        return False
 
-# ── Select option tags for lead form ─────────────────────────────────────────
-def generate_service_options(data: dict) -> str:
-    industry = data.get("industry", "Other")
-    services_raw = data.get("services", "")
-    custom = [s.strip() for s in services_raw.split("\n") if s.strip()]
-    if custom:
-        items = custom[:6]
-    else:
-        items = [t for _, t, _ in DEFAULT_SERVICES.get(industry, DEFAULT_SERVICES["Other"])]
-    opts = [f'          <option value="{slugify(s)}">{s}</option>' for s in items]
-    return "\n".join(opts)
+    with open(index_path, "r", encoding="utf-8") as f:
+        html = f.read()
 
-# ── Service page generation ───────────────────────────────────────────────────
-def generate_service_pages(data: dict, output_dir: Path):
-    industry = data.get("industry", "Other")
-    services_raw = data.get("services", "")
-    custom = [s.strip() for s in services_raw.split("\n") if s.strip()]
-    services = [(slugify(s), s) for s in custom[:6]] if custom else \
-               [(slugify(t), t) for _, t, _ in DEFAULT_SERVICES.get(industry, DEFAULT_SERVICES["Other"])]
+    # 1. SEO block → inject before </head>
+    seo_block = build_seo_block(data, preset)
+    html = html.replace("  <!-- SEO + Schema injected by builder -->", seo_block)
 
-    biz   = data.get("biz_name", "Your Business")
-    city  = city_only(data.get("service_area", "Your City"))
-    phone = phone_clean(data.get("phone", "(555) 000-0000"))
-    phone_d = phone_digits(data.get("phone", "5550000000"))
+    # 2. Google Font URL
+    html = html.replace("{{FONT_FAMILY}}", preset["font_family"])
 
-    svc_dir = output_dir / "services"
-    svc_dir.mkdir(exist_ok=True)
+    # 3. Industry slug for CSS class
+    html = html.replace("{{INDUSTRY_SLUG}}", preset["slug"])
 
-    # Use repo template as base if exists, otherwise generate minimal
-    repo_template = Path("/home/claude/LazyAI/website-template-v2/services/template.html")
-
-    for slug, title in services:
-        if repo_template.exists():
-            content = repo_template.read_text()
-            content = content.replace("Roof Repair in Austin | Lone Star Roofing", f"{title} in {city} | {biz}")
-            content = content.replace("Expert roof repair in Austin", f"Expert {title.lower()} in {city}")
-            content = content.replace("Roof Repair in Austin", f"{title} in {city}")
-            content = content.replace("Lone Star Roofing", biz)
-            content = content.replace("Austin", city)
-            content = content.replace("(512) 555-1234", phone)
-            content = content.replace("+15125551234", f"+1{phone_d}")
-            content = content.replace("lonestarroofing.com", data.get("site_url", "example.com").replace("https://", "").replace("http://", ""))
-        else:
-            content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} in {city} | {biz}</title>
-<meta name="description" content="Professional {title.lower()} in {city}. Fast response, quality work. Call {phone} today.">
-<link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-<nav class="nav"><div class="container nav__inner">
-  <a href="/" class="nav__logo">{biz}</a>
-  <a href="tel:+1{phone_d}" class="nav__phone">📞 {phone}</a>
-</div></nav>
-<section class="hero" style="min-height:50vh">
-  <div class="container hero__content">
-    <h1>{title} in {city}</h1>
-    <p>Professional {title.lower()} services — fast response, quality work, honest pricing.</p>
-    <a href="tel:+1{phone_d}" class="btn btn--accent">📞 Call {phone}</a>
-  </div>
-</section>
-<section class="lead-capture" id="estimate">
-  <div class="container">
-    <h2>Get a Free Estimate</h2>
-    <form class="lead-capture__form" id="leadForm">
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="tel" name="phone" placeholder="Phone Number" required>
-      <input type="hidden" name="service" value="{title}">
-      <button type="submit" class="btn">Get My Free Estimate</button>
-    </form>
-  </div>
-</section>
-<script src="../js/main.js" defer></script>
-</body></html>"""
-
-        (svc_dir / f"{slug}.html").write_text(content)
-
-# ── Main homepage template injection ─────────────────────────────────────────
-def build_homepage(data: dict, output_dir: Path, preset: dict):
-    src = TEMPLATE_DIR / "index.html"
-    if not src.exists():
-        raise FileNotFoundError(f"Template not found: {src}")
-
-    content = src.read_text()
-
-    biz    = data.get("biz_name", "Your Business")
-    city   = city_only(data.get("service_area", "Your City"))
-    phone  = phone_clean(data.get("phone", "(555) 000-0000"))
-    phone_d = phone_digits(data.get("phone", "5550000000"))
-    tagline = data.get("tagline", f"Trusted {data.get('industry','').lower()} services in {city}.")
-    plan   = data.get("plan", "growth")
-    years  = data.get("years_in_business", "")
-    rating_v = data.get("rating_value", "")
-    rating_c = data.get("review_count", "")
-
-    # --- HEAD replacement ---
-    seo = generate_seo_meta(data, preset)
-    ld  = generate_json_ld(data, preset)
-    font_url = preset.get("fonts", "Inter:wght@400;600")
-
-    # Remove the original template <title> and old <meta name="description"> to avoid duplicates
-    content = re.sub(r'<title>[^<]*</title>\s*', '', content, count=1)
-    content = re.sub(r'<meta\s+name="description"[^>]*/>\s*', '', content, count=1)
-    content = re.sub(r'<meta\s+property="og:title"[^>]*/>\s*', '', content, count=1)
-    content = re.sub(r'<meta\s+property="og:description"[^>]*/>\s*', '', content, count=1)
-    content = re.sub(r'<meta\s+property="og:type"[^>]*/>\s*', '', content, count=1)
-    content = re.sub(r'<meta\s+property="og:url"[^>]*/>\s*', '', content, count=1)
-    # Remove original JSON-LD block (we'll inject a clean one)
-    content = re.sub(r'<script type="application/ld\+json">.*?</script>\s*', '', content, count=1, flags=re.DOTALL)
-
-    if "<head>" in content:
-        content = content.replace(
-            "<head>",
-            f"<head>\n{seo}\n{ld}\n"
-            f'<link href="https://fonts.googleapis.com/css2?family={font_url}&display=swap" rel="stylesheet">\n'
-            f"<style>:root{{--color-primary:{preset['primary']};--color-accent:{preset['accent']};}}</style>"
-        )
-
-    # --- Business name (all occurrences) ---
-    content = content.replace("Lone Star Roofing", biz)
-    content = content.replace("Lone Star", biz)
-    content = content.replace("lonestarroofing.com", data.get("site_url", "").replace("https://","").replace("http://","") or "example.com")
-    content = content.replace("info@lonestarroofing.com", data.get("email", f"info@example.com"))
-    content = content.replace("Jake Henderson, Owner &amp; Founder", f"{data.get('contact_name', 'The Owner')}, Owner &amp; Founder")
-
-    # --- City ---
-    content = content.replace("Austin, TX", data.get("service_area", city))
-    content = content.replace("Austin&amp;s", f"{city}&amp;s")
-    # Replace plain "Austin" ONLY in text contexts (avoid URLs)
-    content = re.sub(r'\bAustin\b(?![,.]?\s*TX)', city, content)
-
-    # --- Phone ---
-    content = content.replace("(512) 555-1234", phone)
-    content = content.replace("+15125551234", f"+1{phone_d}")
-    content = content.replace("tel:+15125551234", f"tel:+1{phone_d}")
-
-    # --- Hero headline ---
-    industry = data.get("industry", "Service")
-    hero_hl = data.get("tagline") or f"{city}'s Trusted {industry} Contractor"
-    content = content.replace(
-        "Austin's <span class=\"hero__title-highlight\">Premium Roofing</span> &amp; Exterior Contractor",
-        f"{city}'s <span class=\"hero__title-highlight\">{industry}</span> Experts"
-    )
-    content = content.replace(
-        "Family-owned since 2010. We handle everything from emergency roof repairs to full replacements — with honest pricing, quality materials, and a 10-year workmanship guarantee.",
-        tagline
+    # 4. Inject client_id + api_base onto <body> for JS lead capture
+    client_id = data.get("id", "")
+    html = html.replace(
+        f'class="industry-{preset["slug"]}"',
+        f'class="industry-{preset["slug"]}" data-client-id="{client_id}" data-api-base="{API_BASE}"'
     )
 
-    # --- Rating badge ---
-    if rating_v and rating_c:
-        content = content.replace("4.9 Stars &middot; 287 Reviews", f"{rating_v} Stars &middot; {rating_c} Reviews")
-        content = content.replace('"4.9"', f'"{rating_v}"')
-        content = content.replace('"287"', f'"{rating_c}"')
-    else:
-        # Remove badge entirely if no real data
-        content = re.sub(r'<div class="hero__badge"[^>]*>.*?</div>', '', content, flags=re.DOTALL)
+    # 5. Inject industry CSS vars into <head>
+    css_vars = (
+        f'<style>:root{{'
+        f'--primary:{preset["primary"]};'
+        f'--accent:{preset["accent"]};'
+        f'{preset["font_css"]}'
+        f'}}</style>'
+    )
+    html = html.replace("</head>", f"  {css_vars}\n</head>")
 
-    # --- Trust bar ---
-    since = f"Since {2025 - int(years)}" if years and str(years).isdigit() else "Locally Owned"
-    content = content.replace("Since 2010", since)
-    content = content.replace("Serving Austin", f"Serving {city}")
+    # 6. Services HTML
+    services_html    = build_services_html(services, industry)
+    footer_svc_html  = build_footer_services_html(services)
+    social_html      = build_social_links_html(data)
 
-    # --- Service cards ---
-    service_cards = generate_service_cards(data)
-    service_cards = service_cards.replace("{{{{CITY}}}}", city)  # resolve deferred city token
-    # Replace the services grid content
-    services_grid_pattern = r'(<div class="services__grid">)(.*?)(</div>\s*</div>\s*</section>)'
-    new_grid = rf'\g<1>\n{service_cards}\n      </div>\g<3>'
-    content = re.sub(services_grid_pattern, new_grid, content, flags=re.DOTALL, count=1)
+    # 7. All placeholder replacements
+    replacements = {
+        "{{BIZ_NAME}}":           data.get("biz_name", ""),
+        "{{PHONE}}":              data.get("phone", ""),
+        "{{EMAIL}}":              data.get("email", ""),
+        "{{SERVICE_AREA}}":       data.get("service_area", ""),
+        "{{INDUSTRY}}":           industry,
+        "{{TAGLINE}}":            data.get("tagline") or preset["default_tagline"],
+        "{{RATING_VALUE}}":       str(data.get("rating_value", "5.0")),
+        "{{REVIEW_COUNT}}":       str(data.get("review_count", "100+")),
+        "{{YEARS_IN_BIZ}}":       str(data.get("years_in_biz", "10")),
+        "{{LICENSE_NUMBER}}":     data.get("license_number", ""),
+        "{{GOOGLE_REVIEW_LINK}}": data.get("google_review_link", "#"),
+        "{{SERVICES_HTML}}":      services_html,
+        "{{FOOTER_SERVICES_HTML}}": footer_svc_html,
+        "{{SOCIAL_LINKS_HTML}}":  social_html,
+        "{{YEAR}}":               str(datetime.now().year),
+    }
+    for placeholder, value in replacements.items():
+        html = html.replace(placeholder, value)
 
-    # --- Service options in lead form ---
-    service_options = generate_service_options(data)
-    content = re.sub(
-        r'(<select[^>]*name="service"[^>]*>).*?(</select>)',
-        rf'\1\n          <option value="">What do you need help with?</option>\n{service_options}\n          <option value="other">Something Else</option>\n        \2',
-        content, flags=re.DOTALL
+    with open(index_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    # Write netlify.toml for this site
+    (output_dir / "netlify.toml").write_text(
+        '[build]\n  publish = "."\n\n'
+        '[[headers]]\n  for = "/*"\n'
+        '  [headers.values]\n'
+        '    X-Frame-Options = "SAMEORIGIN"\n'
+        '    X-Content-Type-Options = "nosniff"\n'
     )
 
-    # --- Workforce panel (WebStaff differentiator, inject before footer) ---
-    workforce_html = generate_workforce_panel(plan)
-    workforce_section = f"""
-  <!-- ================================================================
-       WEBSTAFF AI WORKFORCE (powered by WebStaff.com)
-       ================================================================ -->
-  <section class="section section--alt workforce-section" id="ai-office">
-    <div class="container">
-      <div class="text-center">
-        <span class="section-label">Powered by WebStaff</span>
-        <h2 class="section-title">Your AI Office Staff — Always On</h2>
-        <p class="section-subtitle">
-          Never miss a call, a lead, or a review again.
-          Your AI team works 24/7 so you can stay on the tools.
-        </p>
-      </div>
-      {workforce_html}
-    </div>
-  </section>"""
-    content = content.replace("<!-- ================================================================\n       STICKY MOBILE BAR", workforce_section + "\n\n  <!-- ================================================================\n       STICKY MOBILE BAR")
+    # Write manifest
+    manifest = {
+        "generated_at":      datetime.utcnow().isoformat() + "Z",
+        "webstaffr_version": "1.0.0",
+        "biz_name":          data.get("biz_name"),
+        "client_id":         client_id or "not-yet-registered",
+        "plan":              plan,
+        "industry":          industry,
+        "service_area":      data.get("service_area"),
+        "active_staff":      PLAN_STAFF.get(plan, PLAN_STAFF["growth"]),
+        "api_base":          API_BASE,
+    }
+    with open(output_dir / "webstaffr-manifest.json", "w") as f:
+        json.dump(manifest, f, indent=2)
 
-    # --- Story section ---
-    content = content.replace("Lone Star Roofing started in 2010", f"{biz} was founded with a simple idea")
+    if debug:
+        print(f"  Preset used: {industry}")
+        print(f"  Services: {services}")
+        print(f"  Active staff: {PLAN_STAFF.get(plan)}")
+        print(f"  Output files: {sorted(p.name for p in output_dir.iterdir())}")
 
-    # --- Footer year ---
-    content = content.replace("© 2026 Lone Star Roofing", f"© {datetime.now().year} {biz}")
-    content = content.replace("Licenses: TECL #34567", data.get("certs", "Licensed & Insured"))
+    return True
 
-    # --- Add workforce CSS inline ---
-    workforce_css = """
-<style>
-.workforce-section { padding: 80px 0; }
-.workforce-panel { max-width: 900px; margin: 40px auto 0; }
-.workforce-panel__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.workforce-panel__label { font-size: 18px; font-weight: 700; color: var(--color-text-primary, #111); }
-.workforce-panel__plan { font-size: 13px; font-weight: 600; background: var(--color-accent, #3b82f6); color: white; padding: 4px 12px; border-radius: 999px; text-transform: uppercase; letter-spacing: .05em; }
-.workforce-dept { margin-bottom: 24px; }
-.workforce-dept__name { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #888; margin-bottom: 12px; }
-.workforce-dept__staff { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-.workforce-member { border-radius: 10px; padding: 14px 16px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 4px; transition: transform .15s; }
-.workforce-member--active { background: #f0fdf4; border-color: #16a34a; }
-.workforce-member--inactive { background: #f9fafb; opacity: .55; }
-.workforce-member__name { font-size: 14px; font-weight: 700; color: #111; }
-.workforce-member__desc { font-size: 12px; color: #555; }
-.workforce-member__badge { font-size: 11px; font-weight: 600; margin-top: 6px; }
-.workforce-member--active .workforce-member__badge { color: #16a34a; }
-.workforce-member--inactive .workforce-member__badge { color: #999; }
-@media (max-width: 600px) { .workforce-dept__staff { grid-template-columns: 1fr 1fr; } }
-</style>"""
-    content = content.replace("</head>", workforce_css + "\n</head>")
 
-    (output_dir / "index.html").write_text(content)
+# ── CLI ───────────────────────────────────────────────────────────────────────
 
-# ── Validation ────────────────────────────────────────────────────────────────
-REQUIRED_FIELDS = ["biz_name", "phone", "industry", "service_area", "plan"]
-
-def validate(data: dict) -> list[str]:
-    errors = []
-    for f in REQUIRED_FIELDS:
-        if not data.get(f):
-            errors.append(f"Missing required field: {f}")
-    valid_plans = ["essentials", "growth", "pro"]
-    if data.get("plan") and data["plan"].lower() not in valid_plans:
-        errors.append(f"plan must be one of: {', '.join(valid_plans)}")
-    if data.get("rating_value") and not data.get("review_count"):
-        errors.append("rating_value provided without review_count — omit both or provide both")
-    return errors
-
-# ── Entry point ───────────────────────────────────────────────────────────────
 def main():
-    p = argparse.ArgumentParser(description="WebStaff Site Generator")
-    p.add_argument("--intake",    required=True, help="Path to intake JSON")
-    p.add_argument("--validate",  action="store_true", help="Validate intake and exit")
-    p.add_argument("--deploy",    action="store_true", help="Print deploy commands after build")
-    p.add_argument("--platform",  default="netlify", choices=["netlify","vercel"])
-    args = p.parse_args()
+    parser = argparse.ArgumentParser(description="WebStaffr Site Builder")
+    parser.add_argument("--intake",   required=True, help="Path to intake JSON")
+    parser.add_argument("--validate", action="store_true", help="Validate only — no build")
+    parser.add_argument("--deploy",   action="store_true", help="Print deploy commands after build")
+    parser.add_argument("--platform", default="netlify", choices=["netlify", "vercel"])
+    parser.add_argument("--debug",    action="store_true")
+    args = parser.parse_args()
 
-    with open(args.intake, "r") as f:
+    with open(args.intake, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    data["plan"] = data.get("plan", "growth").lower()
-
-    errors = validate(data)
+    errors = validate_intake(data)
     if errors:
-        for e in errors: print(f"❌ {e}")
-        if args.validate:
-            raise SystemExit(1)
-        print("⚠️  Continuing with warnings…")
-    elif args.validate:
-        print("✅ Intake is valid.")
+        for e in errors:
+            print(f"❌ {e}")
+        sys.exit(1)
+
+    if args.validate:
+        print(f"✅ Intake valid: {data['biz_name']} [{data['plan']}]")
         return
 
-    preset = INDUSTRY_PRESETS.get(data["industry"], INDUSTRY_PRESETS["Other"])
-    biz_slug = slugify(data["biz_name"]) + "_" + datetime.now().strftime("%Y%m%d")
-    output_dir = OUTPUT_BASE / biz_slug
-    output_dir.mkdir(parents=True, exist_ok=True)
+    slug      = sanitize_slug(data["biz_name"])
+    ts        = datetime.now().strftime("%Y%m%d_%H%M")
+    out_dir   = OUTPUT_BASE / f"{slug}_{ts}"
 
-    # Copy static assets
-    for subdir in ["css", "js", "images"]:
-        src = TEMPLATE_DIR / subdir
-        dst = output_dir / subdir
-        if src.exists():
-            shutil.copytree(src, dst, dirs_exist_ok=True)
+    print(f"🏗  Building: {data['biz_name']} ({data.get('industry','?')} · {data['plan']})")
+    ok = build_site(data, out_dir, debug=args.debug)
 
-    build_homepage(data, output_dir, preset)
-    generate_service_pages(data, output_dir)
+    if ok:
+        print(f"✅ Site built → {out_dir}")
+        if args.deploy:
+            if args.platform == "netlify":
+                print(f"\n🚀 Deploy:\n  cd {out_dir}\n  npx netlify deploy --prod --dir .")
+            else:
+                print(f"\n🚀 Deploy:\n  cd {out_dir}\n  npx vercel --prod")
+    else:
+        print("❌ Build failed")
+        sys.exit(1)
 
-    # Netlify config
-    netlify_src = Path(__file__).parent.parent / "netlify.toml"
-    if netlify_src.exists():
-        shutil.copy(netlify_src, output_dir / "netlify.toml")
-
-    # Build manifest
-    manifest = {
-        "built_at": datetime.now().isoformat(),
-        "biz_name": data["biz_name"],
-        "plan": data["plan"],
-        "active_staff": WORKFORCE_BY_PLAN.get(data["plan"], []),
-        "industry": data["industry"],
-        "city": city_only(data.get("service_area", "")),
-    }
-    (output_dir / "webstaff-manifest.json").write_text(json.dumps(manifest, indent=2))
-
-    print(f"✅ Built: {data['biz_name']}")
-    print(f"   Output: {output_dir}")
-    print(f"   Plan:   {data['plan'].title()}  |  Staff: {len(WORKFORCE_BY_PLAN.get(data['plan'],[])):,} active")
-
-    if args.deploy:
-        print(f"\n🚀 Deploy commands ({args.platform}):")
-        if args.platform == "netlify":
-            print(f"   cd {output_dir} && netlify deploy --prod --dir .")
-        else:
-            print(f"   cd {output_dir} && vercel --prod")
 
 if __name__ == "__main__":
     main()

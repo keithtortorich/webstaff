@@ -1,0 +1,271 @@
+{
+  "HVAC": {
+    "hero_headline": "Same-day AC repair for Phoenix homeowners — without the all-day wait.",
+    "hero_sub": "Licensed HVAC technicians in your area, dispatched fast. Guaranteed same-day service or your diagnostic is free.",
+    "why_us": [
+      "Same-day service guaranteed in writing — if we can't make it, your diagnostic is free",
+      "NATE-certified technicians on every job — not trainees",
+      "Upfront pricing before we start — no surprise invoices"
+    ],
+    "trust_stats": [
+      { "value": "24/7", "label": "Emergency availability" },
+      { "value": "4.9★", "label": "Google rating" },
+      { "value": "Same day", "label": "Dispatch guarantee" },
+      { "value": "12 yrs", "label": "Serving the area" }
+    ],
+    "faq": [
+      {
+        "q": "How fast can you get someone out here?",
+        "a": "We guarantee same-day service for calls placed before 3pm. After 3pm, we'll have a tech out first thing the next morning — or same-day if it's an emergency and we have availability."
+      },
+      {
+        "q": "Do you charge extra for after-hours or weekend calls?",
+        "a": "Weekend calls are priced the same as weekday. After-hours emergency service (10pm–6am) carries a $75 dispatch fee on top of the standard diagnostic — we'll always tell you the total before anyone rolls."
+      },
+      {
+        "q": "My AC is 12 years old. Is it worth repairing or should I replace it?",
+        "a": "We use the 5,000 rule: multiply the repair cost by the system age. If the number exceeds $5,000, replacement usually makes more financial sense. We'll give you an honest assessment — we don't upsell replacements on systems that have good life left."
+      }
+    ]
+  },
+
+  "Plumber": {
+    "hero_headline": "Emergency plumber in your area — on-site in under 90 minutes, guaranteed.",
+    "hero_sub": "Licensed and insured plumbers available 24/7. Burst pipes, water heaters, drain clogs — we fix it fast and we fix it right.",
+    "why_us": [
+      "90-minute response guarantee on emergencies — or the dispatch fee is waived",
+      "Flat-rate pricing quoted before we touch anything — no open-ended hourly billing",
+      "Licensed, bonded, and insured — every tech background-checked"
+    ],
+    "trust_stats": [
+      { "value": "90 min", "label": "Emergency response" },
+      { "value": "24/7", "label": "Always available" },
+      { "value": "Flat rate", "label": "Pricing model" },
+      { "value": "Licensed", "label": "Bonded & insured" }
+    ],
+    "faq": [
+      {
+        "q": "I have a burst pipe right now — what do I do?",
+        "a": "First, shut off your main water valve — it's usually near the water meter or where the main line enters the house. Then call us immediately. We have emergency technicians on standby and will have someone on the way within the hour."
+      },
+      {
+        "q": "Why won't my drain clear with store-bought products?",
+        "a": "Chemical drain cleaners dissolve organic matter but can't remove solid blockages, root intrusions, or collapsed pipe sections. We use a camera to identify the actual problem before recommending a fix — so you're not paying to treat symptoms."
+      },
+      {
+        "q": "How long does a water heater replacement take?",
+        "a": "A standard tank water heater swap takes 2–3 hours from arrival to hot water. Tankless installs typically run 4–6 hours depending on gas line and venting work needed. We carry common units on the truck and can often do same-day."
+      }
+    ]
+  },
+
+  "Electrician": {
+    "hero_headline": "Licensed electrician for your home — safe, code-compliant, and scheduled this week.",
+    "hero_sub": "Panel upgrades, EV charger installs, rewiring, and emergency electrical — done right and permitted correctly.",
+    "why_us": [
+      "Every job permitted and inspected — we don't cut corners that put your home at risk",
+      "Flat-rate quotes before work begins — no hourly billing surprises",
+      "Master electricians on staff — not apprentices working alone"
+    ],
+    "trust_stats": [
+      { "value": "Licensed", "label": "Master electricians" },
+      { "value": "Permitted", "label": "Every job" },
+      { "value": "Same week", "label": "Scheduling" },
+      { "value": "4.9★", "label": "Google rating" }
+    ],
+    "faq": [
+      {
+        "q": "Do I need a permit for a panel upgrade?",
+        "a": "Yes — always. Any electrical work that modifies your service panel requires a permit and inspection in every jurisdiction we serve. We pull the permit, schedule the inspection, and handle everything. Unpermitted panel work can void your homeowner's insurance and create liability when you sell."
+      },
+      {
+        "q": "Can you install a Level 2 EV charger in my garage?",
+        "a": "Yes. Most home EV charger installs take 3–4 hours. We assess your panel capacity, run a dedicated 240V circuit, install the charger, and have you charging at full speed the same day. We work with all major charger brands — or you can supply your own."
+      },
+      {
+        "q": "My breaker keeps tripping — is that dangerous?",
+        "a": "A repeatedly tripping breaker is the circuit telling you it's overloaded or there's a fault — it's doing its job, but it's a warning. Resetting it repeatedly without finding the cause can mask a fire risk. Call us to diagnose it properly before it becomes a bigger problem."
+      }
+    ]
+  },
+
+  "Roofing": {
+    "hero_headline": "Roof repair and replacement for homeowners — inspected free, fixed fast, warranted in writing.",
+    "hero_sub": "Licensed roofers serving the area since {{YEARS_IN_BIZ}}. Storm damage, leaks, full replacements — free inspection, no-pressure estimate.",
+    "why_us": [
+      "Free, no-obligation roof inspection — written report provided regardless of whether you hire us",
+      "All work warranted in writing: 10-year workmanship, manufacturer material warranty",
+      "Direct insurance claim assistance — we document and photograph everything for your adjuster"
+    ],
+    "trust_stats": [
+      { "value": "Free", "label": "Roof inspection" },
+      { "value": "10 yr", "label": "Workmanship warranty" },
+      { "value": "Licensed", "label": "& fully insured" },
+      { "value": "48 hrs", "label": "Emergency tarping" }
+    ],
+    "faq": [
+      {
+        "q": "How do I know if my roof actually needs replacing or just repair?",
+        "a": "We'll tell you honestly after the inspection. Roofs with isolated damage — a few missing shingles, a flashing leak — are almost always repairable. We recommend replacement only when the decking is compromised, the shingles have less than 20% life left, or repair cost exceeds 30% of replacement cost."
+      },
+      {
+        "q": "My insurance company said I have storm damage — can you help with the claim?",
+        "a": "Yes. We photograph and document all damage in a format insurance adjusters accept. We can meet your adjuster on-site to walk the roof together. We work with all major carriers and won't inflate damage claims — our goal is an accurate, fully documented assessment."
+      },
+      {
+        "q": "How long does a full roof replacement take?",
+        "a": "Most residential reroof jobs are complete in one day. Larger homes or complex rooflines run two days. We handle permits, dumpster placement, and clean-up — you shouldn't need to be home during the work."
+      }
+    ]
+  },
+
+  "Contractor": {
+    "hero_headline": "General contractor for home renovations — licensed, on schedule, and no surprise costs.",
+    "hero_sub": "Kitchen remodels, additions, full renovations. Fixed-price contracts. One point of contact from permit to punch list.",
+    "why_us": [
+      "Fixed-price contracts — the price we quote is the price you pay, period",
+      "Licensed general contractor with all subcontractors verified and insured",
+      "Single point of contact for the entire project — no chasing subs on your own"
+    ],
+    "trust_stats": [
+      { "value": "Fixed", "label": "Price contracts" },
+      { "value": "Licensed", "label": "GC & all subs" },
+      { "value": "10 yr", "label": "In business" },
+      { "value": "4.8★", "label": "Google rating" }
+    ],
+    "faq": [
+      {
+        "q": "How do you handle cost overruns?",
+        "a": "We don't. We provide a fixed-price contract before any work begins. If we scope something incorrectly, that's our problem to solve, not yours. The only time costs increase is if you request a change to the scope — which we document with a written change order before proceeding."
+      },
+      {
+        "q": "How long does a kitchen remodel take?",
+        "a": "A typical full kitchen remodel runs 6–10 weeks from permit approval to final walk-through. We provide a detailed schedule at project kickoff with milestones, so you know what's happening and when. Lead times on cabinets and appliances are the most common variable — we order those first."
+      },
+      {
+        "q": "Do I need to hire my own architect or designer?",
+        "a": "Not necessarily. We work with designers and architects in-house for most projects. If the scope requires stamped architectural drawings for permitting — typically additions or structural work — we'll coordinate that as part of the project, not an afterthought."
+      }
+    ]
+  },
+
+  "Restaurant": {
+    "hero_headline": "Fresh food, honest flavors — dine in, take out, or let us cater your next event.",
+    "hero_sub": "A locally owned kitchen serving the neighborhood since {{YEARS_IN_BIZ}}. Real ingredients. Made to order. No shortcuts.",
+    "why_us": [
+      "Every dish made from scratch — no frozen proteins, no pre-made sauces",
+      "Locally sourced ingredients where possible — we list our suppliers on our menu",
+      "Private dining and catering for groups of 10 to 200 — fully staffed and set up"
+    ],
+    "trust_stats": [
+      { "value": "4.8★", "label": "Google rating" },
+      { "value": "Scratch", "label": "Kitchen" },
+      { "value": "Local", "label": "Sourced ingredients" },
+      { "value": "Catering", "label": "Up to 200 guests" }
+    ],
+    "faq": [
+      {
+        "q": "Do you accommodate dietary restrictions?",
+        "a": "Yes — gluten-free, vegetarian, and vegan options are marked on the menu. For severe allergies, please call ahead so we can prepare safely and avoid cross-contamination. We take allergies seriously and will always tell you if we can't safely accommodate a restriction."
+      },
+      {
+        "q": "How far in advance do I need to book catering?",
+        "a": "For events under 30 people, one week is usually sufficient. For larger events or events requiring rental equipment, two to three weeks is ideal. We've done same-week bookings when we have availability — call us and we'll tell you honestly what we can do."
+      },
+      {
+        "q": "Do you do private dining or restaurant buyouts?",
+        "a": "Yes. We can reserve the private dining room (up to 30 guests) for any evening with a food and beverage minimum. Full buyouts of the restaurant are available on Sunday evenings and Monday — contact us with your date and we'll put together a custom proposal."
+      }
+    ]
+  },
+
+  "Med Spa": {
+    "hero_headline": "Medical-grade aesthetic treatments — real results, no downtime, personalized to you.",
+    "hero_sub": "Botox, filler, laser treatments, and body contouring performed by licensed medical professionals in a clinical setting.",
+    "why_us": [
+      "All injections performed by licensed medical professionals — NP, PA, or MD — never estheticians",
+      "Complimentary consultation before every treatment — no pressure, no packages pushed",
+      "Natural results philosophy — we enhance, not transform"
+    ],
+    "trust_stats": [
+      { "value": "Medical", "label": "Licensed injectors" },
+      { "value": "Free", "label": "Consultation" },
+      { "value": "4.9★", "label": "Google rating" },
+      { "value": "2,000+", "label": "Treatments performed" }
+    ],
+    "faq": [
+      {
+        "q": "How long do Botox results last?",
+        "a": "Most patients see results lasting 3–4 months. First-time patients sometimes metabolize it faster (2–3 months) as the muscle isn't yet trained to stay relaxed. We'll schedule your follow-up at the right interval and adjust units based on how your specific anatomy responded."
+      },
+      {
+        "q": "Is filler safe? What if I don't like the results?",
+        "a": "Hyaluronic acid fillers — which we use exclusively — are dissolvable. If you're unhappy with the result at any point, we can reverse it completely with hyaluronidase. This is one of the main reasons we only use HA-based products: reversibility is a safety feature."
+      },
+      {
+        "q": "What's the difference between a med spa and a regular spa?",
+        "a": "A medical spa operates under physician oversight and offers treatments that require medical licensing — Botox, filler, laser resurfacing, chemical peels at medical grade. Regular spas offer facials, massage, and esthetics. We are a medical facility that happens to feel like a spa."
+      }
+    ]
+  },
+
+  "Dentist": {
+    "hero_headline": "Modern dentistry for the whole family — gentle, efficient, and focused on your comfort.",
+    "hero_sub": "Preventive care, cosmetic dentistry, and same-day emergency appointments. Accepting new patients.",
+    "why_us": [
+      "Same-day emergency appointments available — toothaches and broken teeth don't wait",
+      "Digital X-rays with 90% less radiation than traditional film — results shown to you in real time",
+      "No surprise billing — full treatment plan with costs provided and approved before we start"
+    ],
+    "trust_stats": [
+      { "value": "Same day", "label": "Emergency appts" },
+      { "value": "Digital", "label": "X-ray technology" },
+      { "value": "4.9★", "label": "Google rating" },
+      { "value": "New", "label": "Patients welcome" }
+    ],
+    "faq": [
+      {
+        "q": "I haven't been to the dentist in a few years. Will you judge me?",
+        "a": "Not at all — and we mean that. A significant portion of our new patients haven't had consistent dental care. Our job is to assess where things are now and build a plan to get you healthy, not to lecture you about the past. We've seen everything. Come in."
+      },
+      {
+        "q": "Do you accept my dental insurance?",
+        "a": "We accept most major PPO dental insurance plans. We'll verify your benefits before your appointment and tell you exactly what your out-of-pocket cost will be. We're not in-network with HMO plans, but we can provide a superbill for reimbursement if your plan allows out-of-network care."
+      },
+      {
+        "q": "How long does teeth whitening actually take to work?",
+        "a": "In-office whitening (Zoom or similar) produces visible results in a single 60–90 minute appointment — typically 6–10 shades lighter. Take-home trays with professional-strength gel take 10–14 days of nightly use. Both methods are significantly more effective than over-the-counter products."
+      }
+    ]
+  },
+
+  "Salon": {
+    "hero_headline": "Precision cuts, lived-in color, and styles that hold — book your appointment today.",
+    "hero_sub": "A full-service salon in the heart of {{SERVICE_AREA}}. Haircuts, color, balayage, and treatment services by experienced stylists.",
+    "why_us": [
+      "Consistent results every visit — you'll see the same stylist who knows your hair",
+      "Complimentary consultation before any color service — no surprises on the finished look",
+      "Professional color lines only — Schwarzkopf, Olaplex, and Redken for hair that stays healthy"
+    ],
+    "trust_stats": [
+      { "value": "4.9★", "label": "Google rating" },
+      { "value": "Same", "label": "Stylist every visit" },
+      { "value": "Free", "label": "Color consult" },
+      { "value": "Pro", "label": "Color lines only" }
+    ],
+    "faq": [
+      {
+        "q": "How far in advance do I need to book for color services?",
+        "a": "Color services — especially balayage and full highlights — should be booked 1–2 weeks out. We hold a limited number of same-week color slots for existing clients. If you're a new client wanting color, book 10–14 days ahead to make sure we have enough time scheduled for your service."
+      },
+      {
+        "q": "I want to go lighter but I've been coloring my hair at home. Can you help?",
+        "a": "Yes, but we need to do a consultation first — always complimentary. Box color reacts unpredictably to professional lightener, so we'll assess your hair's current state, porosity, and what's safe to do in one session versus a multi-step process. We won't promise a result we can't safely deliver."
+      },
+      {
+        "q": "What's the difference between balayage and highlights?",
+        "a": "Highlights are applied using foils for a more uniform, controlled lift — great for dramatic brightness or a classic look. Balayage is painted freehand for a softer, sun-grown grow-out with less visible regrowth. Most clients asking for a 'natural' look land on balayage; clients wanting more contrast usually prefer foils. We'll help you choose at the consultation."
+      }
+    ]
+  }
+}
