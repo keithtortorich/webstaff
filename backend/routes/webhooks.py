@@ -141,3 +141,45 @@ async def job_complete(
     )
 
     return JSONResponse({"status": "review_request_queued"})
+
+
+# ── Estimate Follow-up ────────────────────────────────────────────────────────
+
+@router.post("/estimate-followup")
+async def estimate_followup(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """
+    Trigger Sales Consultant to follow up on an outstanding estimate.
+    Body: {client_id, customer_name, customer_email, customer_phone,
+           job_type, estimate_amount, estimate_date, follow_up_number}
+    follow_up_number: 1 (first nudge) | 2 (second nudge) | 3 (close the loop)
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="JSON body required")
+
+    client_id = body.get("client_id")
+    client = crud.get_client(db, client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    from ..agents.sales_consultant import handle_estimate_followup
+    background_tasks.add_task(
+        handle_estimate_followup,
+        db=db,
+        client_id=client_id,
+        client=client,
+        customer_name=body.get("customer_name", "Customer"),
+        customer_email=body.get("customer_email"),
+        customer_phone=body.get("customer_phone"),
+        job_type=body.get("job_type", client.industry),
+        estimate_amount=body.get("estimate_amount"),
+        estimate_date=body.get("estimate_date"),
+        follow_up_number=int(body.get("follow_up_number", 1)),
+    )
+
+    return JSONResponse({"status": "queued", "follow_up_number": body.get("follow_up_number", 1)})

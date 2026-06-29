@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebStaffr — Operator Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --accent: #6366f1;
+      --accent2: #22d3ee;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --card: #1e2130;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .logo { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
+    .logo span { color: var(--accent); }
+    .badge { background: rgba(99,102,241,0.15); color: var(--accent); border: 1px solid rgba(99,102,241,0.3); font-size: 0.7rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.08em; }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 1rem; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+    .metric-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; }
+    .metric-value { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; }
+    .metric-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
+    .green { color: var(--green); } .amber { color: var(--amber); } .accent { color: var(--accent); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    thead th { color: var(--muted); font-weight: 500; text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
+    tbody td { padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(42,45,58,0.5); }
+    tbody tr:last-child td { border-bottom: none; }
+    .pill { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pill-green { background: rgba(16,185,129,0.15); color: var(--green); }
+    .pill-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+    .pill-red { background: rgba(239,68,68,0.12); color: var(--red); }
+    .pill-blue { background: rgba(99,102,241,0.15); color: var(--accent); }
+    .pill-cyan { background: rgba(34,211,238,0.12); color: var(--accent2); }
+    .activity-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .ai { width: 32px; height: 32px; border-radius: 8px; background: rgba(99,102,241,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+    .activity-body { flex: 1; }
+    .activity-title { font-size: 0.85rem; font-weight: 500; }
+    .activity-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .activity-time { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+    .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; margin-right: 6px; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 2rem; }
+    .staff-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; display: flex; align-items: center; gap: 0.75rem; }
+    .staff-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(99,102,241,0.2); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .staff-name { font-size: 0.85rem; font-weight: 600; }
+    .staff-status { font-size: 0.72rem; color: var(--muted); }
+    .staff-dept { font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+
+    /* Ecosystem section */
+    .ecosystem-banner {
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(34,211,238,0.06));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 14px; padding: 1.5rem; margin-bottom: 2rem;
+    }
+    .ecosystem-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .ecosystem-banner .tagline { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.25rem; font-style: italic; }
+    .fsm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
+    .fsm-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; }
+    .fsm-name { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .fsm-status { font-size: 0.72rem; }
+
+    .investor-quote {
+      background: rgba(99,102,241,0.06); border-left: 3px solid var(--accent);
+      padding: 0.85rem 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem;
+      font-size: 0.85rem; font-style: italic; color: var(--text);
+    }
+    .investor-quote strong { color: var(--accent); font-style: normal; }
+
+    .btn { background: var(--accent); color: #fff; border: none; cursor: pointer; padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+    .btn-outline { background: transparent; color: var(--accent); border: 1px solid rgba(99,102,241,0.5); cursor: pointer; padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; }
+    code { background: rgba(99,102,241,0.1); color: var(--accent2); padding: 1px 6px; border-radius: 4px; font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Web<span>Staffr</span></div>
+  <div style="display:flex;align-items:center;gap:1rem">
+    <span class="badge">MVP · Phoenix HVAC Beachhead</span>
+    <span style="font-size:0.8rem;color:var(--muted)"><span class="live-dot"></span>All Agents Active</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Investor Quote -->
+  <div class="investor-quote">
+    <strong>Investor question:</strong> "What happens when ServiceTitan builds this?"<br>
+    <strong>WebStaffr answer:</strong> "We want them to. It validates the category. We're the specialized front-office layer that benefits from their distribution — not competes with it."
+  </div>
+
+  <!-- Platform Ecosystem -->
+  <div class="ecosystem-banner">
+    <h3>🔗 Platform Ecosystem — Integration-First Strategy</h3>
+    <div class="tagline">"Keep your field-service software. WebStaffr makes sure more customers reach it."</div>
+    <div class="fsm-grid">
+      <div class="fsm-card">
+        <div class="fsm-name">ServiceTitan</div>
+        <div class="fsm-status"><span class="pill pill-green">Phase 1 — Active</span></div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Zapier bridge live. Native Phase 2 ready.</div>
+      </div>
+      <div class="fsm-card">
+        <div class="fsm-name">Jobber</div>
+        <div class="fsm-status"><span class="pill pill-amber">Phase 2 — Planned</span></div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Same integration pattern. Weeks 4–8.</div>
+      </div>
+      <div class="fsm-card">
+        <div class="fsm-name">Housecall Pro</div>
+        <div class="fsm-status"><span class="pill pill-amber">Phase 2 — Planned</span></div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Mid-market FSM. Shared arch.</div>
+      </div>
+      <div class="fsm-card">
+        <div class="fsm-name">Google Calendar</div>
+        <div class="fsm-status"><span class="pill pill-amber">Phase 2 — Planned</span></div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Booking for non-FSM clients.</div>
+      </div>
+      <div class="fsm-card">
+        <div class="fsm-name">ST Marketplace</div>
+        <div class="fsm-status"><span class="pill pill-cyan">Phase 4 — Months 3–6</span></div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Co-marketing + distribution.</div>
+      </div>
+      <div class="fsm-card">
+        <div class="fsm-name">Stripe / QuickBooks</div>
+        <div class="fsm-status"><span class="pill pill-blue">Phase 3</span></div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Future revenue line.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <h2>Platform Overview</h2>
+  <div class="metrics">
+    <div class="metric-card"><div class="metric-label">Active Clients</div><div class="metric-value accent" id="stat-clients">—</div><div class="metric-sub">Phoenix HVAC beachhead</div></div>
+    <div class="metric-card"><div class="metric-label">Est. MRR</div><div class="metric-value green" id="stat-mrr">—</div><div class="metric-sub">Blended ARPU ~$487</div></div>
+    <div class="metric-card"><div class="metric-label">Leads Captured</div><div class="metric-value" id="stat-leads">—</div><div class="metric-sub">All time</div></div>
+    <div class="metric-card"><div class="metric-label">Agent Actions</div><div class="metric-value amber" id="stat-actions">—</div><div class="metric-sub">Calls, texts, emails</div></div>
+    <div class="metric-card"><div class="metric-label">Est. ARR</div><div class="metric-value green" id="stat-arr">—</div><div class="metric-sub">Annualized run rate</div></div>
+  </div>
+
+  <!-- AI Workforce -->
+  <h2>AI Workforce — On Duty</h2>
+  <div class="staff-grid">
+    <div class="staff-card"><div class="staff-avatar">📞</div><div><div class="staff-name">Receptionist</div><div class="staff-dept">Front Office</div><div class="staff-status"><span class="live-dot"></span>Answering calls 24/7</div></div></div>
+    <div class="staff-card"><div class="staff-avatar">⚡</div><div><div class="staff-name">Lead Coordinator</div><div class="staff-dept">Front Office</div><div class="staff-status"><span class="live-dot"></span>Following up leads</div></div></div>
+    <div class="staff-card"><div class="staff-avatar">📅</div><div><div class="staff-name">Appt. Scheduler</div><div class="staff-dept">Front Office</div><div class="staff-status"><span class="live-dot"></span>Booking jobs</div></div></div>
+    <div class="staff-card"><div class="staff-avatar">⭐</div><div><div class="staff-name">Reputation Manager</div><div class="staff-dept">Marketing</div><div class="staff-status"><span class="live-dot"></span>Requesting reviews</div></div></div>
+    <div class="staff-card"><div class="staff-avatar">💼</div><div><div class="staff-name">Sales Consultant</div><div class="staff-dept">Sales</div><div class="staff-status"><span class="live-dot"></span>Sending estimates</div></div></div>
+    <div class="staff-card"><div class="staff-avatar">🏢</div><div><div class="staff-name">Office Manager</div><div class="staff-dept">Operations</div><div class="staff-status"><span class="live-dot"></span>Managing integrations</div></div></div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid2">
+    <div class="card">
+      <h2 style="margin-bottom:1rem">Recent Leads</h2>
+      <table>
+        <thead><tr><th>Name</th><th>Source</th><th>Status</th><th>FSM Sync</th></tr></thead>
+        <tbody id="leads-tbody"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1rem">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:1rem">Agent Activity Feed</h2>
+      <div id="activity-feed"><div style="color:var(--muted);text-align:center;padding:1rem">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- Active Clients -->
+  <div class="card" style="margin-bottom:2rem">
+    <h2 style="margin-bottom:1rem">Active Clients</h2>
+    <table>
+      <thead><tr><th>Business</th><th>Plan</th><th>Industry</th><th>Market</th><th>FSM</th><th>Onboarded</th></tr></thead>
+      <tbody id="clients-tbody"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:1rem">No clients yet. <a href="/intake/intake.html" style="color:var(--accent)">Onboard first client →</a></td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Integration Phase Status -->
+  <div class="card" style="margin-bottom:2rem">
+    <h2 style="margin-bottom:1rem">ServiceTitan Integration Phases</h2>
+    <table>
+      <thead><tr><th>Phase</th><th>Timeline</th><th>Mechanism</th><th>Status</th><th>What It Enables</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Phase 1 — Zapier Bridge</strong></td>
+          <td>Now</td>
+          <td>Webhook → Zapier → ST API</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td>Leads auto-create ST customers + jobs. Zero ST credentials needed.</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 2 — Native OAuth</strong></td>
+          <td>Weeks 4–8</td>
+          <td>Direct ST V2 REST API</td>
+          <td><span class="pill pill-amber">Stubbed / Ready</span></td>
+          <td>Bidirectional sync: scheduling, job status, customer deduplication.</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 3 — AI Context</strong></td>
+          <td>Months 2–4</td>
+          <td>Pull ST history into AI</td>
+          <td><span class="pill pill-blue">Designed</span></td>
+          <td>"Welcome back Mike — your condenser is still under warranty."</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 4 — Marketplace</strong></td>
+          <td>Months 3–6</td>
+          <td>ST App Marketplace (Silver tier)</td>
+          <td><span class="pill pill-blue">Roadmap</span></td>
+          <td>Co-marketing + access to 100K ST contractor install base.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Live Endpoints -->
+  <div class="card" style="margin-bottom:2rem">
+    <h2 style="margin-bottom:1rem">Live API Endpoints</h2>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Agent</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST /webhooks/voice/incoming</code></td><td><span class="pill pill-blue">Receptionist</span></td><td>Twilio missed call → instant personalized SMS callback</td></tr>
+        <tr><td><code>POST /webhooks/lead-form</code></td><td><span class="pill pill-green">Lead Coordinator</span></td><td>Website form → SMS + email + FSM sync</td></tr>
+        <tr><td><code>POST /webhooks/job-complete</code></td><td><span class="pill pill-amber">Reputation Mgr</span></td><td>Job done → Google review request SMS</td></tr>
+        <tr><td><code>GET /api/overview</code></td><td>—</td><td>Platform-wide MRR/ARR/leads (this dashboard)</td></tr>
+        <tr><td><code>GET /docs</code></td><td>—</td><td>Full OpenAPI documentation (auto-generated)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<script>
+const API = "";
+
+async function loadOverview() {
+  try {
+    const d = await (await fetch(`${API}/api/overview`)).json();
+    document.getElementById("stat-clients").textContent = d.active_clients ?? 0;
+    document.getElementById("stat-mrr").textContent = "$" + (d.estimated_mrr ?? 0).toLocaleString();
+    document.getElementById("stat-arr").textContent = "$" + (d.estimated_arr ?? 0).toLocaleString();
+    document.getElementById("stat-leads").textContent = d.total_leads_captured ?? 0;
+    document.getElementById("stat-actions").textContent = d.agent_actions_executed ?? 0;
+  } catch(e) {}
+}
+
+async function loadClients() {
+  try {
+    const clients = await (await fetch(`${API}/api/clients`)).json();
+    const planLabels = { essentials: "Essentials $197", growth: "Growth $497", pro: "Pro $997" };
+    const planPills = { essentials: "pill-amber", growth: "pill-blue", pro: "pill-green" };
+    const tbody = document.getElementById("clients-tbody");
+    if (!clients.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:1rem">No clients yet. <a href="/intake/intake.html" style="color:var(--accent)">Onboard first client →</a></td></tr>`; return; }
+    tbody.innerHTML = clients.map(c => `
+      <tr>
+        <td><strong>${c.biz_name}</strong></td>
+        <td><span class="pill ${planPills[c.plan]||'pill-blue'}">${planLabels[c.plan]||c.plan}</span></td>
+        <td>${c.industry||"—"}</td>
+        <td>${c.service_area||"—"}</td>
+        <td>${c.servicetitan_tenant_id ? '<span class="pill pill-green">ST</span>' : '<span style="color:var(--muted);font-size:0.75rem">None</span>'}</td>
+        <td>${c.onboarded_at ? new Date(c.onboarded_at).toLocaleDateString() : "—"}</td>
+      </tr>`).join("");
+  } catch(e) {}
+}
+
+async function loadActivity() {
+  try {
+    const clients = await (await fetch(`${API}/api/clients`)).json();
+    if (!clients.length) {
+      document.getElementById("activity-feed").innerHTML = `<div style="color:var(--muted);text-align:center;padding:1rem">Waiting for first client onboarding.</div>`;
+      document.getElementById("leads-tbody").innerHTML = `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1rem">No leads yet.</td></tr>`;
+      return;
+    }
+    const cid = clients[0].id;
+    const [events, leads] = await Promise.all([
+      (await fetch(`${API}/api/clients/${cid}/events`)).json(),
+      (await fetch(`${API}/api/clients/${cid}/leads`)).json(),
+    ]);
+
+    const icons = { Receptionist:"📞", "Lead Coordinator":"⚡", "Reputation Manager":"⭐", "Sales Consultant":"💼", "Office Manager":"🏢" };
+    document.getElementById("activity-feed").innerHTML = events.length
+      ? events.slice(0,8).map(e => `
+        <div class="activity-item">
+          <div class="ai">${icons[e.agent]||"🤖"}</div>
+          <div class="activity-body">
+            <div class="activity-title">${e.agent}</div>
+            <div class="activity-meta">${e.type.replace(/_/g," ")} · ${e.success?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗</span>'}</div>
+          </div>
+          <div class="activity-time">${e.executed_at?new Date(e.executed_at).toLocaleTimeString():""}</div>
+        </div>`).join("")
+      : `<div style="color:var(--muted);text-align:center;padding:1rem">Awaiting first trigger</div>`;
+
+    const sp = { new:"pill-amber", contacted:"pill-blue", booked:"pill-green", lost:"pill-red" };
+    document.getElementById("leads-tbody").innerHTML = leads.length
+      ? leads.slice(0,8).map(l => `<tr>
+          <td>${l.name||"Unknown"}</td>
+          <td>${l.source||"—"}</td>
+          <td><span class="pill ${sp[l.status]||"pill-amber"}">${l.status}</span></td>
+          <td>${l.synced_to_st?'<span class="pill pill-green">Synced</span>':'<span style="color:var(--muted);font-size:0.75rem">Pending</span>'}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1rem">No leads yet</td></tr>`;
+  } catch(e) {}
+}
+
+loadOverview(); loadClients(); loadActivity();
+setInterval(() => { loadOverview(); loadActivity(); loadClients(); }, 30000);
+</script>
+</body>
+</html>
